@@ -16,8 +16,8 @@ add_library(MonaCPP STATIC ${SOURCES})
 # source inclusions
 target_include_directories(MonaCPP
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Mona>    # Répertoire source lors de la construction
-        $<INSTALL_INTERFACE:include>         # Répertoire lors de l'installation
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/>
+        $<INSTALL_INTERFACE:include/Mona>
 )
 target_link_libraries(MonaCPP PUBLIC ${OPENSSL_LIBRARIES})
 
@@ -36,8 +36,7 @@ install(TARGETS MonaCPP
     EXPORT MonaCPPTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include/Mona)
+    RUNTIME DESTINATION bin)
 # Install Mona headers
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Mona/
     DESTINATION include/Mona
