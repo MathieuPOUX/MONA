@@ -13,6 +13,8 @@ endif()
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
 add_library(MonaCPP STATIC ${SOURCES})
 
+add_library(MonaCPP::MonaCPP ALIAS MonaCPP)
+
 # source inclusions
 target_include_directories(MonaCPP
     PUBLIC
