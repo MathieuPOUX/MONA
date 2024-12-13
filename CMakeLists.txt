@@ -17,7 +17,7 @@ add_library(MonaCPP STATIC ${SOURCES})
 target_include_directories(MonaCPP
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/>
-        $<INSTALL_INTERFACE:include/Mona>
+        $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(MonaCPP PUBLIC ${OPENSSL_LIBRARIES})
 
