@@ -8,6 +8,12 @@ MonaCPP uses  [nlohmann/json](https://github.com/nlohmann/json) for JSON and Val
 
 Special Thanks to their authors.
 
+## Install
+```cmake -B build -G Ninja```
+```cmake --build build```
+```cmake --install build```
+
+
 ## License
 MonaCPP is licensed under the MIT License.
 
