@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 
 project(MonaCPP LANGUAGES CXX)
 
@@ -16,7 +16,7 @@ add_library(MonaCPP STATIC ${SOURCES})
 # source inclusions
 target_include_directories(MonaCPP
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/>    # Répertoire source lors de la construction
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Mona>    # Répertoire source lors de la construction
         $<INSTALL_INTERFACE:include>         # Répertoire lors de l'installation
 )
 target_link_libraries(MonaCPP PUBLIC ${OPENSSL_LIBRARIES})
