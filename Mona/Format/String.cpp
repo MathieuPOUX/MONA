@@ -152,34 +152,46 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
     const char* current(value);
     while(*current && size-->0) {
 
-      if (iscntrl(*current) || *current==' ') {
-        if (!beginning)
-          break; // accept a partial conversion!
-        // trim beginning
-        ++current;
-        continue;
-      }
+		if (iscntrl(*current) || *current==' ') {
+			if (!beginning) {
+				// accept a partial conversion!
+				ex.set<Ex::Format>(value, " is a partial number");
+				break;
+			}
+			// trim beginning
+			++current;
+			continue;
+      	}
 
-      if(ispunct(*current)) {
-        switch (*current++) {
-          case '-':
-            if (beginning) {
-              negative = negative ? 0 : 1; // double -- = +
-            }
-          case '+':
-           if (!beginning)
-              break; // stop conversion
-            continue;
-          case '.':
-          case ',':
-            if (beginning || comma)
-              break; // stop conversion
-            comma = 1;
-            continue;
-          default:; // other punction, stop conversion!
-        }
-        break; // stop but accept a partial conversion!
-      }
+		if(ispunct(*current)) {
+			switch (*current++) {
+				case '-':
+					if (beginning) {
+						negative = negative ? 0 : 1; // double -- = +
+					}
+				case '+':
+					if (!beginning) {
+						// accept a partial conversion!
+						ex.set<Ex::Format>(value, " is a partial number");
+						break;
+					}
+					continue;
+				case '.':
+				case ',':
+					if (beginning || comma) {
+						// accept a partial conversion!
+						ex.set<Ex::Format>(value, " is a partial number");
+						break;
+					}
+					comma = 1;
+					continue;
+				default:;
+				// stop conversion!
+			}
+			// stop but accept a partial conversion!
+			ex.set<Ex::Format>(value, " is a partial number");
+			break; 
+		}
 
       int8_t value = *current - '0';
       if (value > 9) {
@@ -189,8 +201,11 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
         else
           value -= 7; // is upper letter
       }
-      if(value>=base)
-        break; // stop but accept the partial conversion!
+      if (value>=base) {
+		// stop but accept a partial conversion!
+		ex.set<Ex::Format>(value, " is a partial number");
+        break;
+	  }
    
       if (beginning) {
         beginning = false;
