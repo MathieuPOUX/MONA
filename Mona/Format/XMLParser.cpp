@@ -85,7 +85,7 @@ RESET:
 
 	uint32_t		 size(0);
 	const char*  name(NULL);
-	uint32_t		 innerSpaceRemovables;
+	uint32_t		 innerSpaceRemovables = 0;
 	
 	while (_current<_packet.end()) {
 

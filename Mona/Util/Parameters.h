@@ -102,7 +102,10 @@ struct Parameters : String::Object<Parameters> {
 	/*!
 	Return false if key doesn't exist or if it's not a numeric type, otherwise return true and assign numeric 'value' */
 	template<typename Type>
-	bool getNumber(const std::string& key, Type& value) const { STATIC_ASSERT(std::is_arithmetic<Type>::value); const std::string* pValue = getParameter(key); return pValue && String::toNumber(*pValue, value); }
+	bool getNumber(const std::string& key, Type& value) const {
+		STATIC_ASSERT(std::is_arithmetic<Type>::value); const std::string* pValue = getParameter(key);
+		return pValue && String::tryNumber(*pValue, value);
+	}
 	/*!
 	Return false if key doesn't exist or if it's not a boolean type, otherwise return true and assign boolean 'value' */
 	bool getBoolean(const std::string& key, bool& value) const;
