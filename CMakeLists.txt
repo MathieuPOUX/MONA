@@ -36,7 +36,8 @@ install(TARGETS MonaCPP
     EXPORT MonaCPPTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin)
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include)
 # Install Mona headers
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Mona/
     DESTINATION include/Mona
