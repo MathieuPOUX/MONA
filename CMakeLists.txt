@@ -9,8 +9,17 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     add_compile_options(-Wall -Wno-reorder -Wno-terminate -Wunknown-pragmas)
 endif()
 
+# sources libraries
+file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
+add_library(MonaCPP STATIC ${SOURCES})
+
 # source inclusions
-include_directories(${CMAKE_SOURCE_DIR})
+target_include_directories(MonaCPP
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>    # Répertoire source lors de la construction
+        $<INSTALL_INTERFACE:include/Mona>         # Répertoire lors de l'installation
+)
+target_link_libraries(MonaCPP PUBLIC ${OPENSSL_LIBRARIES})
 
 # dependancies
 find_package(OpenSSL REQUIRED)
@@ -21,11 +30,6 @@ if (OPENSSL_FOUND)
 else()
     message(FATAL_ERROR "OpenSSL not found")
 endif()
-
-# sources libraries
-file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
-add_library(MonaCPP STATIC ${SOURCES})
-target_link_libraries(MonaCPP PUBLIC ${OPENSSL_LIBRARIES})
 
 # Install libs and bins
 install(TARGETS MonaCPP
