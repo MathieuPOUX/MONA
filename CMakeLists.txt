@@ -9,29 +9,27 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     add_compile_options(-Wall -Wno-reorder -Wno-terminate -Wunknown-pragmas)
 endif()
 
-# sources libraries
-file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/*.cpp")
+# add sources
+file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 add_library(MonaCPP STATIC ${SOURCES})
 
-add_library(MonaCPP::MonaCPP ALIAS MonaCPP)
-
-# source inclusions
-target_include_directories(MonaCPP
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/>
-        $<INSTALL_INTERFACE:include>
+# add headers
+target_include_directories(MonaCPP PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+    $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(MonaCPP PUBLIC ${OPENSSL_LIBRARIES})
 
-# dependancies
+# OPENSSL dependency
 find_package(OpenSSL REQUIRED)
-if (OPENSSL_FOUND)
-    include_directories(${OPENSSL_INCLUDE_DIR})
-    message(STATUS "OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
-    message(STATUS "OpenSSL libraries: ${OPENSSL_LIBRARIES}")
-else()
-    message(FATAL_ERROR "OpenSSL not found")
-endif()
+include_directories(${OPENSSL_INCLUDE_DIR})
+message(STATUS "OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
+message(STATUS "OpenSSL libraries: ${OPENSSL_LIBRARIES}")
+
+# pThread dependency
+find_package(Threads REQUIRED)
+
+# Link dependencies
+target_link_libraries(MonaCPP PUBLIC ${OPENSSL_LIBRARIES} pthread)
 
 # Install libs and bins
 install(TARGETS MonaCPP
@@ -41,16 +39,15 @@ install(TARGETS MonaCPP
     RUNTIME DESTINATION bin
     INCLUDES DESTINATION include)
 # Install Mona headers
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/Mona/
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Mona/
     DESTINATION include/Mona
     FILES_MATCHING PATTERN "*.h")
 # Install nlohmann/json.hpp
-install(FILES ${CMAKE_SOURCE_DIR}/nlohmann/json.hpp
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/nlohmann/json.hpp
     DESTINATION include/nlohmann)
 # Generate MonaCPPConfig.cmake
 install(EXPORT MonaCPPTargets
     FILE MonaCPPConfig.cmake
-    NAMESPACE MonaCPP::
     DESTINATION lib/cmake/MonaCPP)
 # Versionning
 include(CMakePackageConfigHelpers)
@@ -61,6 +58,5 @@ write_basic_package_version_file(
 install(FILES
     "${CMAKE_BINARY_DIR}/MonaCPPConfigVersion.cmake"
     DESTINATION lib/cmake/MonaCPP)
-
 
 
