@@ -120,10 +120,7 @@ struct Parameters : String::Object<Parameters> {
 	}
 	/*!
 	A short version of getString with default argument to get value by returned result */
-	const char* get(const std::string& key, const char* defaultValue = NULL) const;
-	const char* get(const std::string& key, const std::string& defaultValue) const {
-		return get(key, defaultValue.c_str());
-	}
+	std::string get(const std::string& key, const std::string& defaultValue = "") const;
 
 	bool hasKey(const std::string& key) const { return getParameter(key) != NULL; }
 

@@ -599,8 +599,8 @@ string& FileSystem::MakeRelative(string& path) {
 }
 
 bool FileSystem::Find(string& path) {
-	const char* paths = Util::Environment().get("PATH");
-	if (!paths)
+	string  paths = Util::Environment().get("PATH");
+	if (paths.empty())
 		return false;
 
 	string temp;

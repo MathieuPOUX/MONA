@@ -64,9 +64,9 @@ bool Parameters::getString(const string& key, string& value) const {
 	return true;
 }
 
-const char* Parameters::get(const string& key, const char* defaultValue) const {
+std::string Parameters::get(const string& key, const string& defaultValue) const {
 	const string* pValue = getParameter(key);
-	return pValue ? pValue->c_str() : defaultValue;
+	return pValue ? *pValue : defaultValue;
 }
 
 bool Parameters::getBoolean(const string& key, bool& value) const {

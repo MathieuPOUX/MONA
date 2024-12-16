@@ -172,7 +172,7 @@ bool Application::init(int argc, const char* argv[]) {
 void Application::displayHelp() {
 	HelpFormatter::Description description(_file.name().c_str(), _options);
 	String::Append(description.usage, " [/currentDir/[", _file.baseName(), ".ini]]");
-	description.header = get("description", name());
+	description.header = get("description", name()).c_str();
 	HelpFormatter::Format(std::cout, description);
 }
 
