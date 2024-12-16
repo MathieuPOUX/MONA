@@ -31,6 +31,10 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 /////  Usefull macros and patchs   //////
 
+#if !defined(NDEBUG)
+	#define _DEBUG
+#endif
+
 #define BIN (uint8_t*)
 #define STR (char*)
 
@@ -95,20 +99,6 @@ namespace Mona {
 Use a U(value) conversion to make bitshit and bitright operator safe with signed number */
 template<typename Type>
 static typename std::make_unsigned<Type>::type U(Type value) { return value; }
-
-enum Any : uint8_t {
-	ANY_NONE = 0, // keep equal to 0!
-	ANY_NULL,
-	ANY_BOOLEAN,
-	ANY_NUMBER,
-	ANY_DATE,
-	ANY_STRING, // < ANY_STRING => number!
-	ANY_BINARY,
-	ANY_OBJECT, // first complex type! (>= ANY_OBJECT => complexType)
-	ANY_ARRAY,
-	ANY_MAP
-};
-
 
 #if defined(_DEBUG) && defined(_WIN32)
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
