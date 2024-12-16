@@ -54,11 +54,11 @@ struct Packet: Bytes, virtual Object {
 	Packet(CharType(&data)[size]) : _reference(true) { set<CharType, size>(data); }
 	/*!
 	Reference an immutable area of unbuffered data */
-	Packet(const Bytes& bytes) : _ppBuffer(&_NullBytes), _data(bytes.data()), _size(bytes.size()), _reference(true) {}
-	/*!
-	Reference an immutable area of unbuffered data */
-	template<typename Type, typename = typename std::enable_if<std::is_class<Type>::value && std::is_convertible<Type, std::string>::value, Type>::type>
-	Packet(const Type& value) : _reference(true) { set<std::string>(value); }
+	template<typename Type, typename = typename std::enable_if<
+		std::is_convertible<decltype(std::declval<Type>().data()), const void*>::value &&
+		std::is_same<decltype(std::declval<Type>().size()), std::size_t>::value
+	>::type>
+	Packet(const Type& value) : _ppBuffer(&_NullBytes), _data(STR value.data()), _size(value.size()), _reference(true) {}
 	/*!
 	Create a copy from packet (explicit to not reference a temporary packet) */
 	explicit Packet(const Packet& packet) : _reference(true) { set(packet); }
@@ -183,13 +183,13 @@ struct Packet: Bytes, virtual Object {
 		_size = size-1;
 		return self;
 	}
-	/*!
-	Reference an immutable area of unbuffered data */
-	Packet& set(const Bytes& bytes) { return set(EXP(bytes)); }
-	/*!
-	Reference an immutable area of unbuffered data */
-	template<typename Type, typename = typename std::enable_if<std::is_class<Type>::value && std::is_convertible<Type, std::string>::value, Type>::type>
-	Packet& set(const Type& value) { const std::string& val(value); return set(EXP(val)); }
+
+	template<typename Type, typename = typename std::enable_if<
+		std::is_convertible<decltype(std::declval<Type>().data()), const void*>::value &&
+		std::is_same<decltype(std::declval<Type>().size()), std::size_t>::value
+	>::type>
+	Packet& set(const Type& value) { return set(STR EXP(value)); }
+
 	/*!
 	Reference a packet */
 	Packet& set(const Packet& packet);
@@ -270,6 +270,12 @@ struct Packet: Bytes, virtual Object {
 			size = pBuffer->size() - (data - pBuffer->data());
 		return set(pBuffer).setArea(data, size);
 	}
+
+	/**
+	 * Alias of set to be compatible with template for std::string
+	 */
+	template <typename ...Args>
+	Packet& assign(Args&&... args) { return set(std::forward<Args>(args)...); }
 
 private:
 	Packet& setArea(const char* data, uint32_t size);
