@@ -126,8 +126,10 @@ void DetectMemoryLeak();
 #else
 #define		DEBUG_ASSERT(ASSERT)			{ assert(ASSERT); }
 #endif
+#define 	CHECK(ASSERT)		DEBUG_ASSERT(ASSERT)
 #else
 #define		DEBUG_ASSERT(ASSERT)		{}
+#define 	CHECK(ASSERT)		{ if(!(ASSERT)) throw std::runtime_error( #ASSERT " assertion, " __FILE__ "[" LINE_STRING "]"); }
 #endif
 
 ///// TYPES /////

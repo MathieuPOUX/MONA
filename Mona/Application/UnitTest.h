@@ -80,16 +80,6 @@ private:
 	const std::string	_version;
 };
 
-/// Macro for assert true function
-
-#if defined(_DEBUG)
-#define CHECK(ASSERT)		DEBUG_ASSERT(ASSERT)
-#define DEBUG_CHECK(ASSERT)	DEBUG_ASSERT(ASSERT)
-#else
-#define CHECK(ASSERT)		{ if(!(ASSERT)) throw std::runtime_error( #ASSERT " assertion, " __FILE__ "[" LINE_STRING "]"); }
-#define DEBUG_CHECK(ASSERT) {}
-#endif
-
 /// Macro for adding new tests in a Test cpp
 #define ADD_TEST(NAME) struct NAME##TEST : UnitTest::Test { \
 	NAME##TEST(const std::string& type) : UnitTest::Test(type) {}\

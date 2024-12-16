@@ -60,3 +60,17 @@ install(FILES
     DESTINATION lib/cmake/MonaCPP)
 
 
+
+########################################
+# Tests                                #
+########################################
+enable_testing()
+macro(createTest file)
+  get_filename_component(Test ${file} NAME_WE)
+  add_executable(${Test} tests/${Test}.cpp)
+  target_link_libraries(${Test} MonaCPP)
+  STRING(SUBSTRING ${Test} 4 -1 Name)
+endmacro()
+
+createTest(tests/TestValue.cpp)
+add_test(NAME ${Name} COMMAND ${Test})
