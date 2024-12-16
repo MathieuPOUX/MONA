@@ -138,12 +138,22 @@ bool Application::init(int argc, const char* argv[]) {
 	// 5 - define options: after configurations to override configurations (for logs.level for example) and to allow log in defineOptions
 	Exception ex;
 	defineOptions(ex, _options);
-	if (ex)
+	if (ex) {
 		FATAL_ERROR(ex);
-	if (!_options.process(ex, argc, argv, [this](const string& name, const char* value) { setString("arguments." + name, value ? value : ""); }))
+	}
+
+	if(!_options.process(ex, argc, argv, [this](const string& name, const char* value) {
+			setString("arguments." + name, value ? value : ""); 
+		})) {
+		if(!ex) {
+			// handler already has already effectuate a task without error!
+			// --help, or --version
+			return false;
+		}
 		FATAL_ERROR(ex, ", use --help")
-	else if(ex)
+	} else if(ex) {
 		WARN(ex, ", use --help")
+	}
 
 	// 6 - behavior
 	if (hasKey("arguments.help")) {
@@ -195,8 +205,19 @@ void Application::defineOptions(Exception& ex, Options& options) {
 			return true;
 		});
 
-	options.add(ex,"help", "h", "Displays help information about command-line usage.");
-	options.add(ex,"version", "v", String("Displays ", name()," version."));
+	options.add(ex, "help", "h", "Displays help information about command-line usage.")
+		.handler([this](Exception &ex, const char *value) {
+			displayHelp();
+			return false;
+		});
+	options.add(ex, "version", "v", String("Displays ", name(), " version."))
+		.handler([this](Exception &ex, const char *value) {
+			// just show version and exit
+			if (!_version) {
+				INFO(name(), " (no version defined)");
+			}
+			return false;
+		});
 }
 
 void Application::onParamChange(const string& key, const string* pValue) {

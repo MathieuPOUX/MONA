@@ -85,6 +85,8 @@ void HelpFormatter::FormatOption(ostream& ostr, const Option& option, int indent
     ostr << SHORT_PREFIX << option.shortName();
     n += sizeof(SHORT_PREFIX) + option.shortName().length();
 	if (option.takesArgument()) {
+		ostr << ':';
+		++n;
 		if (!option.argumentRequired()) {
 			ostr << '[';
 			++n;
@@ -104,7 +106,7 @@ void HelpFormatter::FormatOption(ostream& ostr, const Option& option, int indent
 			ostr << '[';
 			++n;
 		}
-		ostr << '=';
+		ostr << ':';
 		++n;
 		ostr << option.argumentName();
 		n += option.argumentName().length();
