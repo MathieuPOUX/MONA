@@ -202,6 +202,8 @@ struct String : std::string {
 	static bool IsFalse(const std::string& value) { return IsFalse(value.data(),value.size()); }
 	static bool IsFalse(const char* value, std::size_t size = std::string::npos) { return IEqual(value, size, "0") || IEqual(value, size, "false") || IEqual(value, size, "no") || IEqual(value, size, "off") || IEqual(value, size, "null"); }
 
+	static std::string& replace(std::string& str, const std::string& what, const std::string& with);
+
 	template <typename BufferType>
 	static bool FromURI(char hi, char lo, BufferType& buffer) {
 		if (!isxdigit(hi) || !isxdigit(lo)) {

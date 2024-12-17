@@ -131,6 +131,15 @@ size_t String::TrimRight(const char* value, size_t size) {
 	return size;
 }
 
+string& String::replace(string& str, const string& what, const string& with) {
+	size_t pos = 0;
+	while ((pos = str.find(what, pos)) != std::string::npos) {
+		str.replace(pos, what.length(), with);
+		pos += with.length();
+	}
+	return str;
+}
+
 template<typename Type, uint8_t base>
 bool String::tryNumber(const char* value, size_t size, Type& result)  {
 	Exception ex;
