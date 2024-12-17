@@ -26,7 +26,7 @@ namespace Mona {
 
 struct IOSRTSocket;
 struct IOSocket : protected Thread, virtual Object {
-	IOSocket(const Handler& handler, const ThreadPool& threadPool, const char* name = "IOSocket");
+	IOSocket(const Handler& handler, const ThreadPool& threadPool);
 	~IOSocket();
 
 	const Handler&			handler;

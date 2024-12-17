@@ -88,7 +88,7 @@ private:
 };
 
 IOFile::IOFile(const Handler& handler, const ThreadPool& threadPool, uint16_t cores) :
-	handler(handler), threadPool(threadPool), _threadPool(Thread::PRIORITY_LOW, cores*2), Thread("FileWatching") { // 2*CPU => because disk speed can be at maximum 2x more than memory, and Low priority to not impact main thread pool
+	handler(handler), threadPool(threadPool), _threadPool(Thread::PRIORITY_LOW, cores*2) { // 2*CPU => because disk speed can be at maximum 2x more than memory, and Low priority to not impact main thread pool
 }
 
 IOFile::~IOFile() {

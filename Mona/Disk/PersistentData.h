@@ -27,11 +27,11 @@ namespace Mona {
 
 
 struct PersistentData : private Thread, virtual Object {
-	PersistentData(const char* name = "PersistentData") : _disableTransaction(false), Thread(name) {}
+	PersistentData() : _disableTransaction(false) {}
 
 	typedef std::function<void(const std::string& path, const Packet& packet)> ForEach;
 
-	void load(Exception& ex, const std::string& rootDir, const ForEach& forEach, bool disableTransaction=false);
+	void load(Exception& ex, const std::string& rootDir, const ForEach& forEach, bool disableTransaction = false);
 
 /*!
 	Add an persitant data */

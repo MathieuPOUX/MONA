@@ -24,7 +24,7 @@ namespace Mona {
 
 struct BufferPool : Buffer::Allocator, private Thread, virtual Object {
 
-	BufferPool() : Thread("BufferPool") { start(Thread::PRIORITY_LOWEST); }
+	BufferPool() { start(Thread::PRIORITY_LOWEST); }
 	~BufferPool() { stop(); }
 
 private:

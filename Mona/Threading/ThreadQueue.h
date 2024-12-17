@@ -24,7 +24,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 namespace Mona {
 
 struct ThreadQueue : Thread, virtual Object {
-	ThreadQueue(Priority priority = PRIORITY_NORMAL) : Thread("ThreadQueue"), _priority(priority) {}
+	ThreadQueue(Priority priority = PRIORITY_NORMAL) : _priority(priority) {}
 	virtual ~ThreadQueue() { stop(); }
 
 	static ThreadQueue*	Current() { return _PCurrent; }

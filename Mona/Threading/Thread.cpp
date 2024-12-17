@@ -100,20 +100,22 @@ uint32_t Thread::CurrentId() {
 #endif
 }
 
-Thread::Thread(const char* name) : _priority(PRIORITY_NORMAL), _stop(true), _name(name) {
+Thread::Thread() : _priority(PRIORITY_NORMAL), _stop(true) {
 }
 
 Thread::~Thread() {
 	// check not running because if running the children object used in "run" are already deleted!
-	if (!_stop)
-		CRITIC("Thread ",_name," deleting without be stopped before by child class");
-	if (_thread.joinable())
+	if (!_stop) {
+		CRITIC("Thread ", name(), " deleting without be stopped before by child class");
+	}
+	if (_thread.joinable()) {
 		_thread.join();
+	}
 }
 
 void Thread::process() {
 	_Me = this;
-	SetDebugName(_Name = _name);
+	SetDebugName(_Name = name());
 
 #if !defined(_DEBUG)
 	try {
@@ -123,15 +125,15 @@ void Thread::process() {
 #if defined(_WIN32)
 		static int Priorities[] = { THREAD_PRIORITY_LOWEST, THREAD_PRIORITY_BELOW_NORMAL, THREAD_PRIORITY_NORMAL, THREAD_PRIORITY_ABOVE_NORMAL, THREAD_PRIORITY_HIGHEST };
 		if (_priority != PRIORITY_NORMAL && SetThreadPriority(GetCurrentThread(), Priorities[_priority]) == 0)
-			WARN("Impossible to change ", _name, " thread priority to ", Priorities[_priority]);
+			WARN("Impossible to change ", name(), " thread priority to ", Priorities[_priority]);
 #else
 		static int Min = sched_get_priority_min(SCHED_OTHER);
 		if(Min==-1) {
-			WARN("Impossible to compute minimum ", _name, " thread priority, ",strerror(errno));
+			WARN("Impossible to compute minimum ", name(), " thread priority, ",strerror(errno));
 		} else {
 			static int Max = sched_get_priority_max(SCHED_OTHER);
 			if(Max==-1) {
-				WARN("Impossible to compute maximum ", _name, " thread priority, ",strerror(errno));
+				WARN("Impossible to compute maximum ", name(), " thread priority, ",strerror(errno));
 			} else {
 				static int Priorities[] = {Min,Min + (Max - Min) / 4,Min + (Max - Min) / 2,Min + (Max - Min) / 4,Max};
 
@@ -139,18 +141,18 @@ void Thread::process() {
 				params.sched_priority = Priorities[_priority];
 				int result;
 				if ((result=pthread_setschedparam(pthread_self(), SCHED_OTHER , &params)))
-					WARN("Impossible to change ", _name, " thread priority to ", Priorities[_priority]," ",strerror(result));
+					WARN("Impossible to change ", name(), " thread priority to ", Priorities[_priority]," ",strerror(result));
 			}
 		}
 #endif
 
 		Exception ex;
-		AUTO_ERROR(run(ex, _requestStop), _name);
-#if !defined(_DEBUG)
+		AUTO_ERROR(run(ex, _requestStop), name());
+#if defined(NDEBUG)
 	} catch (exception& ex) {
-		CRITIC(_name, ", ", ex.what());
+		CRITIC(name(), ", ", ex.what());
 	} catch (...) {
-		CRITIC(_name, ", error unknown");
+		CRITIC(name(), ", error unknown");
 	}
 #endif
 
@@ -158,13 +160,18 @@ void Thread::process() {
 	_stop = true;
 }
 
+void Thread::requestStop() {
+	_requestStop = true; // advise thread (intern)
+	wakeUp.set();
+}
 
 void Thread::start(Priority priority) {
 	if (!_stop || _Me==this)
 		return;
 	std::lock_guard<std::mutex> lock(_mutex);
-	if (_thread.joinable())
+	if (_thread.joinable()) {
 		_thread.join();
+	}
 	_priority = priority;
 	wakeUp.reset();
 	_stop = false;
@@ -180,11 +187,11 @@ void Thread::stop() {
 		_stop = true;
 		return;
 	}
-	std::lock_guard<std::mutex> lock(_mutex);
-	wakeUp.set(); // wakeUp a sleeping thread, mutex it to avoid a Signal::reset before on start call!
-	if (_thread.joinable())
+	if (_thread.joinable()) {
+		// wakeUp a sleeping thread
+		wakeUp.set();
 		_thread.join();
+	}
 }
-
 
 } // namespace Mona

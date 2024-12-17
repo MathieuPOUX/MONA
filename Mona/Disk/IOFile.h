@@ -87,6 +87,7 @@ struct IOFile : virtual Object, Thread { // Thread is for file watching!
 
 	void join();
 private:
+	const std::string& name() const override { static std::string Name("FileWatching"); return Name; }
 	bool run(Exception& ex, const volatile bool& requestStop);
 
 	struct Action;

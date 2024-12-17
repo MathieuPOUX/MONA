@@ -93,8 +93,8 @@ private:
 };
 
 
-IOSocket::IOSocket(const Handler& handler, const ThreadPool& threadPool, const char* name) : _initSignal(false),
-   _system(0), Thread(name),_subscribers(0),handler(handler), threadPool(threadPool) {
+IOSocket::IOSocket(const Handler& handler, const ThreadPool& threadPool) : _initSignal(false),
+   _system(0), _subscribers(0),handler(handler), threadPool(threadPool) {
 }
 
 IOSocket::~IOSocket() {

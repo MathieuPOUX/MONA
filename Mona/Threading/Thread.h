@@ -34,9 +34,10 @@ struct Thread : virtual Object {
 	virtual ~Thread();
 
 	void						start(Priority priority = PRIORITY_NORMAL);
-	virtual void				stop();
+	void 						requestStop();
+	void						stop();
 
-	const char*					name() const { return _name; }
+	virtual const std::string&	name() const { return typeOf(self); }
 	bool						running() const { return !_stop; }
 	
 	static unsigned				ProcessorCount() { unsigned result(std::thread::hardware_concurrency());  return result ? result : 1; }
@@ -58,7 +59,7 @@ struct Thread : virtual Object {
 		std::string _oldName;
 	};
 protected:
-	Thread(const char* name);
+	Thread();
 
 	Signal wakeUp;
 
@@ -71,7 +72,6 @@ private:
 	static thread_local std::string		_Name;
 	static thread_local Thread*			_Me;
 
-	const char*		_name;
 	Priority		_priority;
 	volatile bool	_stop;
 	volatile bool	_requestStop;
