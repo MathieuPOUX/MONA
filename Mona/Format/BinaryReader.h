@@ -45,10 +45,9 @@ struct BinaryReader : Bytes, virtual Object {
 	double			readDouble();
 	float			readFloat();
 	bool			readBool() { return _current==_end ? false : ((*_current++) != 0); }
-	/*!
-	Read a 7Bit value, supports signed value in adding a first sign low bit*/
-	template<typename ValueType>
-	ValueType		read7Bit(uint8_t bytes = sizeof(ValueType) + 1);
+
+	template<typename NumType>
+	NumType			read7Bit();
 	std::string&	readString(std::string& value) { return read(read7Bit<uint32_t>(), value); }
 
 	

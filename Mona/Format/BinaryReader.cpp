@@ -103,30 +103,29 @@ float BinaryReader::readFloat() {
 	return value;
 }
 
-template<typename ValueType>
-ValueType BinaryReader::read7Bit(uint8_t bytes) {
-	uint8_t byte;
-	ValueType result = 0; // unsigned!
-	do {
-		byte = read8();
-		if (!--bytes) {
-			result = (result << 8) | byte; // Use all 8 bits from the 5th byte
-			break;
-		}
-		result = (result << 7) | (byte & 0x7F);
-	} while (byte & 0x80);
-	if (!is_signed<ValueType>::value)
+template<typename NumType>
+NumType BinaryReader::read7Bit() {
+	NumType result = 0;
+    uint8_t bits = 0;
+    while(available()) {
+      NumType byte = read8(); // cast to NumType to get a correct right bitwise
+      result |= (byte & 0x7F) << bits;
+      if(!(byte & 0x80))
+        break;
+      bits += 7;
+	};
+	if (!is_signed<NumType>::value)
 		return result;
 	bool isNegative = result & 1;
 	result >>= 1; // remove bit sign
-	return isNegative ? -typename make_signed<ValueType>::type(result) : result;
+	return isNegative ? -typename make_signed<NumType>::type(result) : result;
 }
 
-template uint16_t BinaryReader::read7Bit(uint8_t bytes);
-template uint32_t BinaryReader::read7Bit(uint8_t bytes);
-template uint64_t BinaryReader::read7Bit(uint8_t bytes);
-template int16_t BinaryReader::read7Bit(uint8_t bytes);
-template int32_t BinaryReader::read7Bit(uint8_t bytes);
-template int64_t BinaryReader::read7Bit(uint8_t bytes);
+template uint16_t BinaryReader::read7Bit();
+template uint32_t BinaryReader::read7Bit();
+template uint64_t BinaryReader::read7Bit();
+template int16_t BinaryReader::read7Bit();
+template int32_t BinaryReader::read7Bit();
+template int64_t BinaryReader::read7Bit();
 
 } // namespace Mona

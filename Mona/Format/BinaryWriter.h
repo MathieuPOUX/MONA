@@ -51,7 +51,7 @@ struct BinaryWriter : Bytes, virtual Object {
 	/*!
 	Write a 7Bit value, supports signed value in adding a first sign low bit*/
 	template<typename ValueType>
-	BinaryWriter& write7Bit(typename std::make_unsigned<ValueType>::type value, uint8_t bytes = sizeof(ValueType) + 1);
+	BinaryWriter& write7Bit(typename std::make_unsigned<ValueType>::type value);
 	BinaryWriter& writeString(const std::string& value) { return write7Bit<uint32_t>(value.size()).write(value); }
 	BinaryWriter& writeString(const char* value, std::size_t size = std::string::npos) { if(size== std::string::npos) size = strlen(value); return write7Bit<uint32_t>(size).write(value, size); }
 

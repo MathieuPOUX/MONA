@@ -84,9 +84,7 @@ BinaryWriter& BinaryWriter::writeFloat(float value) {
 }
 
 template<typename ValueType>
-BinaryWriter& BinaryWriter::write7Bit(typename make_unsigned<ValueType>::type value, uint8_t bytes) {
-	if (!bytes)
-		return self;
+BinaryWriter& BinaryWriter::write7Bit(typename make_unsigned<ValueType>::type value) {
 	if (is_signed<ValueType>::value) {
 		bool isNegative = typename make_signed<ValueType>::type(value) < 0;
 		value <<= 1; // reserve one bit for sign
@@ -95,23 +93,19 @@ BinaryWriter& BinaryWriter::write7Bit(typename make_unsigned<ValueType>::type va
 			value |= 1;
 		}
 	}
-	uint8_t bits = (bytes - 1) * 7 + 1;
-	if (!(value >> (bits - 1))) {
-		bits -= 8;
-		while (!(value >> bits) && (bits -= 7));
-	}
-	while (bits>1) {
-		write8(0x80 | uint8_t(value >> bits));
-		bits -= 7;
-	}
-	return write8(value & (bits ? 0xFF : 0x7F));
+	char byte = value & 0x7F;
+    while (value >>= 7) {
+      write8(0x80 | byte);
+      byte = value & 0x7F;
+    }
+    return write8(byte);
 }
-template BinaryWriter& BinaryWriter::write7Bit<uint16_t>(make_unsigned<uint16_t>::type value, uint8_t bytes);
-template BinaryWriter& BinaryWriter::write7Bit<uint32_t>(make_unsigned<uint32_t>::type value, uint8_t bytes);
-template BinaryWriter& BinaryWriter::write7Bit<uint64_t>(make_unsigned<uint64_t>::type value, uint8_t bytes);
-template BinaryWriter& BinaryWriter::write7Bit<int16_t>(make_unsigned<int16_t>::type value, uint8_t bytes);
-template BinaryWriter& BinaryWriter::write7Bit<int32_t>(make_unsigned<int32_t>::type value, uint8_t bytes);
-template BinaryWriter& BinaryWriter::write7Bit<int64_t>(make_unsigned<int64_t>::type value, uint8_t bytes);
+template BinaryWriter& BinaryWriter::write7Bit<uint16_t>(make_unsigned<uint16_t>::type value);
+template BinaryWriter& BinaryWriter::write7Bit<uint32_t>(make_unsigned<uint32_t>::type value);
+template BinaryWriter& BinaryWriter::write7Bit<uint64_t>(make_unsigned<uint64_t>::type value);
+template BinaryWriter& BinaryWriter::write7Bit<int16_t>(make_unsigned<int16_t>::type value);
+template BinaryWriter& BinaryWriter::write7Bit<int32_t>(make_unsigned<int32_t>::type value);
+template BinaryWriter& BinaryWriter::write7Bit<int64_t>(make_unsigned<int64_t>::type value);
 
 
 } // namespace Mona
