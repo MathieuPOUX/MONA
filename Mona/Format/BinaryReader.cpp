@@ -53,6 +53,15 @@ char* BinaryReader::read(uint32_t size, char* value) {
 	return value;
 }
 
+string& BinaryReader::readString(string& value) {
+	const char* current = _current;
+	while (current < _end && *current) {
+		++current;
+	}
+	read(current-_current, value);
+	next(); // skip the 0 termination
+	return value;
+}
 
 uint16_t BinaryReader::read16() {
 	uint16_t value(0);

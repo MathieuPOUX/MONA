@@ -100,6 +100,8 @@ BinaryWriter& BinaryWriter::write7Bit(typename make_unsigned<ValueType>::type va
     }
     return write8(byte);
 }
+
+
 template BinaryWriter& BinaryWriter::write7Bit<uint16_t>(make_unsigned<uint16_t>::type value);
 template BinaryWriter& BinaryWriter::write7Bit<uint32_t>(make_unsigned<uint32_t>::type value);
 template BinaryWriter& BinaryWriter::write7Bit<uint64_t>(make_unsigned<uint64_t>::type value);
