@@ -24,7 +24,18 @@ namespace Mona {
 
 	struct Ex : String, virtual Object {
 		NULLABLE(empty())
-		struct Application; struct Extern; struct Format; struct Intern; struct Net; struct Permission; struct Protocol; struct System; struct Unavailable; struct Unfound; struct Unsupported;
+		struct Application;
+		struct Extern;
+		struct Format;
+		struct IO;
+		struct Intern;
+		struct Net;
+		struct Permission;
+		struct Protocol;
+		struct System;
+		struct Unavailable;
+		struct Unfound;
+		struct Unsupported;
 	};
 	/*!
 	Application exception, error from user side */
@@ -41,6 +52,11 @@ namespace Mona {
 	/*!
 	Formatting exception */
 	struct Ex::Format							: Ex {};
+	/*!
+	Access IO exception */
+	struct Ex::IO								: Ex { struct Input; struct Output; };
+		struct Ex::IO::Input : IO {};
+		struct Ex::IO::Output : IO{};
 	/*!
 	Intern exception, code/coder error */
 	struct Ex::Intern							: Ex {};
