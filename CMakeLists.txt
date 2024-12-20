@@ -74,3 +74,6 @@ endmacro()
 
 createTest(tests/TestValue.cpp)
 add_test(NAME ${Name} COMMAND ${Test})
+
+createTest(tests/TestInsertionMap.cpp)
+add_test(NAME ${Name} COMMAND ${Test})
