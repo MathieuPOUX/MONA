@@ -25,6 +25,12 @@ namespace Mona {
 
 struct Util : virtual Static {
 
+	template<typename MapType, typename KeyType, typename ValueType>
+	static ValueType get(const MapType& map, const KeyType& key, const ValueType& defaultValue) {
+		const auto& it = map.find(key);
+		return (it != map.end()) ? it->second : defaultValue;
+	}
+
 	static void Dump(const char* data, uint32_t size, Buffer& buffer);
 
 	static const Parameters& Environment();
