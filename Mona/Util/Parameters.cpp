@@ -16,6 +16,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 #include "Mona/Util/Parameters.h"
 #include "Mona/Disk/File.h"
+#include "Mona/Format/URI.h"
 
 using namespace std;
 
@@ -269,7 +270,7 @@ const map<uint32_t, Packet>& Parameters::Key::parts() const {
 static void DecodeURI(string& buffer, char lo) {
 	char hi = buffer.back();
 	buffer.resize(buffer.size() - 2); // remove %+hi
-	String::FromURI(hi, lo, buffer);
+	URI::parse(hi, lo, buffer);
 }
 uint32_t Parameters::Parser::operator()(const Packet& packet, const OnItem& onItem) {
 	uint32_t count = 0;

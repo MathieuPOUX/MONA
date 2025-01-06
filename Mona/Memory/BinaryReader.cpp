@@ -14,7 +14,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 */
 
-#include "Mona/Format/BinaryReader.h"
+#include "Mona/Memory/BinaryReader.h"
 
 using namespace std;
 

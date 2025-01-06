@@ -23,6 +23,10 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
+/**
+ * @ingroup Util
+ * @brief General utility functions
+ */
 struct Util : virtual Static {
 
 	template<typename MapType, typename KeyType, typename ValueType>
@@ -91,87 +95,6 @@ struct Util : virtual Static {
 		return pt - distance;
 	}
 
-
-	template <typename BufferType>
-	static BufferType& ToBase64(const char* data, uint32_t size, BufferType& buffer, bool append=false) {
-		uint32_t accumulator(buffer.size()),bits(0);
-
-		if (!append)
-			accumulator = 0;
-		buffer.resize(accumulator+uint32_t(ceil(size/3.0)*4));
-
-		char* current((char*)buffer.data());
-		if (!current) // to expect null writer 
-			return buffer;
-		const char*	end(current+buffer.size());
-		current += accumulator;
-
-		const char* endData = data + size;
-		
-		accumulator = 0;
-		while(data<endData) {
-			accumulator = (accumulator << 8) | (*data++ & 0xFFu);
-			bits += 8;
-			while (bits >= 6) {
-				bits -= 6;
-				*current++ = _B64Table[(accumulator >> bits) & 0x3Fu];
-			}
-		}
-		if (bits > 0) { // Any trailing bits that are missing.
-			accumulator <<= 6 - bits;
-			*current++ = _B64Table[accumulator & 0x3Fu];
-		}
-		while (current<end) // padding with '='
-			*current++ = '=';
-		return buffer;
-	}
-
-
-	template <typename BufferType>
-	static bool FromBase64(BufferType& buffer) { return FromBase64(buffer.data(), buffer.size(), buffer); }
-
-	template <typename BufferType>
-	static bool FromBase64(const char* data, uint32_t size, BufferType& buffer, bool append=false) {
-		if (!buffer.data())
-			return false; // to expect null writer 
-
-		uint32_t bits(0), oldSize(append ? buffer.size() : 0);
-		uint32_t accumulator(oldSize + uint32_t(ceil(size / 4.0) * 3));
-		const char* end = data+size;
-
-		if (buffer.size()<accumulator)
-			buffer.resize(accumulator); // maximum size!
-		char* out =  (char*)buffer.data() + oldSize;
-
-		accumulator = size = 0;
-
-		while(data<end) {
-			uint8_t c = *data++;
-			if (isspace(c) || c == '=')
-				continue;
-
-			if ((c > 127) || (_ReverseB64Table[c] > 63)) {
-				// reset the oldSize
-				buffer.resize(oldSize);
-				return false;
-			}
-		
-			accumulator = (accumulator << 6) | _ReverseB64Table[c];
-			bits += 6;
-			if (bits >= 8) {
-				bits -= 8;
-				size++;
-				*out++ = ((accumulator >> bits) & 0xFFu);
-			}
-		}
-		buffer.resize(oldSize+size);
-		return true;
-	}
-
-
-private:
-	static const char						_B64Table[65];
-	static const char						_ReverseB64Table[128];
 };
 
 } // namespace Mona

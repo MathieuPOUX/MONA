@@ -33,7 +33,7 @@ struct Socket : virtual Object, Net::Stats {
 	typedef Event<void()>														  OnFlush;
 	typedef Event<void()>														  OnDisconnection;
 
-	/*!
+	/**
 	Decoder offers to decode data in the reception thread when socket is used with IOSocket
 	If pBuffer is reseted, no onReceived is callen (data captured),
 	/!\ pSocket must never be "attached" to the decoder in a instance variable otherwise a memory leak could happen (however a weak attachment stays acceptable) */
@@ -58,7 +58,7 @@ struct Socket : virtual Object, Net::Stats {
 		BACKLOG_MAX = 200 // blacklog maximum, see http://tangentsoft.net/wskfaq/advanced.html#backlog
 	};
 
-	/*!
+	/**
 	Creates a Socket which supports IPv4 and IPv6 */
 	Socket(Type type);
 	virtual ~Socket();
@@ -122,13 +122,13 @@ struct Socket : virtual Object, Net::Stats {
 
 	virtual bool accept(Exception& ex, Shared<Socket>& pSocket);
 
-	/*!
+	/**
 	Connect or disconnect (if address is Wildcard) to a peer address */
 	virtual bool connect(Exception& ex, const SocketAddress& address, uint16_t timeout=0);
-	/*!
+	/**
 	Bind socket, if socket is datagram and the address passed is a multicast ip it join the multicast group related (call joinGroup) */
 	virtual bool bind(Exception& ex, const SocketAddress& address);
-	/*!
+	/**
 	Bind on any available port */
 	bool		 bind(Exception& ex, const IPAddress& ip=IPAddress::Wildcard()) { return bind(ex, SocketAddress(ip, 0)); }
 	virtual bool listen(Exception& ex, int backlog = SOMAXCONN);
@@ -140,7 +140,7 @@ struct Socket : virtual Object, Net::Stats {
 	int			 send(Exception& ex, const char* data, uint32_t size, int flags = 0) { return sendTo(ex, data, size, SocketAddress::Wildcard(), flags); }
 	virtual int	 sendTo(Exception& ex, const char* data, uint32_t size, const SocketAddress& address, int flags=0);
 
-	/*!
+	/**
 	Sequential and safe writing, can queue data if can't send immediatly (flush required on onFlush event)
 	Returns size of data sent immediatly (or -1 if error, for TCP socket a SHUTDOWN_SEND is done, so socket will be disconnected) */
 	int			 write(Exception& ex, const Packet& packet, int flags = 0) { return write(ex, packet, SocketAddress::Wildcard(), flags); }

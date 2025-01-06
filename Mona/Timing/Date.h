@@ -19,6 +19,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #include "Mona/Mona.h"
 #include "Mona/Timing/Time.h"
 #include "Mona/Timing/Timezone.h"
+#include "Mona/Format/Format.h"
 #include "inttypes.h"
 
 namespace Mona {
@@ -26,6 +27,82 @@ namespace Mona {
 struct Exception;
 
 struct Date : Time, virtual Object {
+	struct Format : Mona::Format<Format> {
+		Format(const Date& date, const char* fmt = Date::FORMAT_ISO8601) :
+			fmt(fmt), date(date) {
+		}
+		const char* const fmt;
+		const Date& date;
+
+		template<typename OutType>
+		void stringify(OutType& out) const {
+
+			char buffer[32];
+			uint32_t formatSize = strlen(fmt);
+			uint32_t iFormat(0);
+
+			while (iFormat < formatSize) {
+				char c(fmt[iFormat++]);
+				if (c != '%') {
+					if (c != '[' && c != ']')
+						out.append(&c, 1);
+					continue;
+				}
+
+				if (iFormat == formatSize)
+					break;
+
+				switch (c = fmt[iFormat++]) {
+				case 'w': out.append(_WeekDayNames[date.weekDay()], 3); break;
+				case 'W': { const char* day(_WeekDayNames[date.weekDay()]); out.append(day, strlen(day)); break; }
+				case 'b': out.append(_MonthNames[date.month() - 1], 3); break;
+				case 'B': { const char* month(_MonthNames[date.month() - 1]); out.append(month, strlen(month)); break; }
+				case 'd': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", date.day())); break;
+				case 'e': out.append(buffer, snprintf(buffer, sizeof(buffer), "%u", date.day())); break;
+				case 'f': out.append(buffer, snprintf(buffer, sizeof(buffer), "%2d", date.day())); break;
+				case 'm': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", date.month())); break;
+				case 'n': out.append(buffer, snprintf(buffer, sizeof(buffer), "%u", date.month())); break;
+				case 'o': out.append(buffer, snprintf(buffer, sizeof(buffer), "%2d", date.month())); break;
+				case 'y': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", date.year() % 100)); break;
+				case 'Y': out.append(buffer, snprintf(buffer, sizeof(buffer), "%04d", date.year())); break;
+				case 'H': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", date.hour())); break;
+				case 'h': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", (date.hour() < 1 ? 12 : (date.hour() > 12 ? (date.hour() - 12) : date.hour())))); break;
+				case 'a': out.append((date.hour() < 12) ? "am" : "pm", 2); break;
+				case 'A': out.append((date.hour() < 12) ? "AM" : "PM", 2); break;
+				case 'M': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", date.minute())); break;
+				case 'S': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", date.second())); break;
+				case 's': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", date.second()));
+					out.append(EXPC("."));
+				case 'F':
+				case 'i': out.append(buffer, snprintf(buffer, sizeof(buffer), "%03d", date.millisecond())); break;
+				case 'c': out.append(buffer, snprintf(buffer, sizeof(buffer), "%u", date.millisecond() / 100)); break;
+				case 'z': Timezone::Format(date.isGMT() ? Timezone::GMT : date.offset(), out); break;
+				case 'Z': Timezone::Format(date.isGMT() ? Timezone::GMT : date.offset(), out, false); break;
+				case 't':
+				case 'T': {
+					if (iFormat == formatSize)
+						break;
+					uint32_t factor(1);
+					switch (tolower(fmt[iFormat++])) {
+					case 'h':
+						factor = 3600000;
+						break;
+					case 'm':
+						factor = 60000;
+						break;
+					case 's':
+						factor = 1000;
+						break;
+					}
+					out.append(buffer, snprintf(buffer, sizeof(buffer), "%02" PRIu64, uint64_t(date.time() / factor)));
+					break;
+				}
+				default: out.append(&c, 1);
+				}
+			}
+		}
+	};
+
 	static const char* FORMAT_ISO8601; 				/// 2005-01-01T12:00:00+01:00 | 2005-01-01T11:00:00Z
 	static const char* FORMAT_ISO8601_FRAC;			/// 2005-01-01T12:00:00.000000+01:00 | 2005-01-01T11:00:00.000000Z
 	static const char* FORMAT_ISO8601_SHORT; 		/// 20050101T120000+01:00 | 20050101T110000Z
@@ -135,77 +212,6 @@ struct Date : Time, virtual Object {
 	// offset
 	void	setOffset(int32_t offset);
 
-
-	template<typename OutType>
-	OutType& format(const char* format, OutType& out) const {
-		if (_day == 0)
-			init();
-
-		char buffer[32];
-		uint32_t formatSize = strlen(format);
-		uint32_t iFormat(0);
-
-		while (iFormat < formatSize) {
-			char c(format[iFormat++]);
-			if (c != '%') {
-				if (c != '[' && c != ']')
-					out.append(&c, 1);
-				continue;
-			}
-
-			if (iFormat == formatSize)
-				break;
-
-			switch (c = format[iFormat++]) {
-				case 'w': out.append(_WeekDayNames[weekDay()], 3); break;
-				case 'W': { const char* day(_WeekDayNames[weekDay()]); out.append(day, strlen(day)); break; }
-				case 'b': out.append(_MonthNames[_month - 1], 3); break;
-				case 'B': { const char* month(_MonthNames[_month - 1]); out.append(month, strlen(month)); break; }
-				case 'd': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", _day)); break;
-				case 'e': out.append(buffer, snprintf(buffer, sizeof(buffer), "%u", _day)); break;
-				case 'f': out.append(buffer, snprintf(buffer, sizeof(buffer), "%2d", _day)); break;
-				case 'm': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", _month)); break;
-				case 'n': out.append(buffer, snprintf(buffer, sizeof(buffer), "%u", _month)); break;
-				case 'o': out.append(buffer, snprintf(buffer, sizeof(buffer), "%2d", _month)); break;
-				case 'y': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", _year % 100)); break;
-				case 'Y': out.append(buffer, snprintf(buffer, sizeof(buffer), "%04d", _year)); break;
-				case 'H': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", _hour)); break;
-				case 'h': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", (_hour<1 ? 12 : (_hour>12 ? (_hour - 12) : _hour)))); break;
-				case 'a': out.append((_hour < 12) ? "am" : "pm", 2); break;
-				case 'A': out.append((_hour < 12) ? "AM" : "PM", 2); break;
-				case 'M': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", _minute)); break;
-				case 'S': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", _second)); break;
-				case 's': out.append(buffer, snprintf(buffer, sizeof(buffer), "%02d", _second));
-					out.append(EXPC("."));
-				case 'F':
-				case 'i': out.append(buffer, snprintf(buffer, sizeof(buffer), "%03d", _millisecond)); break;
-				case 'c': out.append(buffer, snprintf(buffer, sizeof(buffer), "%u", _millisecond / 100)); break;
-				case 'z': Timezone::Format(isGMT() ? Timezone::GMT : offset(), out); break;
-				case 'Z': Timezone::Format(isGMT() ? Timezone::GMT : offset(), out, false); break;
-				case 't':
-				case 'T': {
-					if (iFormat == formatSize)
-						break;
-					uint32_t factor(1);
-					switch (tolower(format[iFormat++])) {
-						case 'h':
-							factor = 3600000;
-							break;
-						case 'm':
-							factor = 60000;
-							break;
-						case 's':
-							factor = 1000;
-							break;
-					}
-					out.append(buffer, snprintf(buffer, sizeof(buffer), "%02" PRIu64, uint64_t(time() / factor)));
-					break;
-				}
-				default: out.append(&c, 1);
-			}
-		}
-		return out;
-	}
 
 private:
 	void  init() const { _day = 1; ((Date*)this)->update(Time::time(), _offset); }

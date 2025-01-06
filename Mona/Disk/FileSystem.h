@@ -62,7 +62,7 @@ struct FileSystem : virtual Static {
 		Attributes& reset() { lastAccess = 0;  lastChange = 0; size = 0; return *this; }
 	};
 
-	/*!
+	/**
 	File iteration, level is the deep sub directory level (when mode = MODE_HEAVY)
 	If returns false it stops current directory iteration (but continue in sub directory if mode = MODE_HEAVY) */
 	typedef std::function<bool(const std::string& file, uint16_t level)> ForEach;
@@ -79,12 +79,12 @@ struct FileSystem : virtual Static {
 	static bool			IsFolder(const std::string& path) { return IsFolder(path.c_str()); }
 	static bool			IsFolder(const char* path);
 	
-	/*!
+	/**
 	End the path with a / if not already present */
 	static std::string  MakeFolder(const char* path) { std::string result(path); MakeFolder(result); return result; }
 	static std::string	MakeFolder(const std::string& path) { return MakeFolder(path.c_str()); }
 	static std::string&	MakeFolder(std::string& path);
-	/*!
+	/**
 	Remove end / if present (not guarantee that isFolder returns false now, if is "." for example it's a folder)  */
 	static std::string	MakeFile(const char* path) { std::string result(path); MakeFile(result); return result; }
 	static std::string	MakeFile(const std::string& path) { return MakeFile(path.c_str()); }

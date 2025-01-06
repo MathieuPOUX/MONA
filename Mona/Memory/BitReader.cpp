@@ -14,7 +14,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 */
 
-#include "Mona/Format/BitReader.h"
+#include "Mona/Memory/BitReader.h"
 
 using namespace std;
 

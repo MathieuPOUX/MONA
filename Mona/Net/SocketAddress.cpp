@@ -43,7 +43,7 @@ uint16_t SocketAddress::SplitLiteral(const char* value, string& host) {
 
 bool SocketAddress::setPort(Exception& ex, const char* port) {
 	uint16_t number;
-	if (!String::tryNumber(ex, port, number))
+	if (!String::tryNumber(ex, number, port))
 		return false;
 	IPAddress::setPort(number);
 	return true;
@@ -66,7 +66,7 @@ bool SocketAddress::setIntern(Exception& ex, const char* host, const char* port,
 	if(!port) // to solve the ambiguitis call between set(..., const char* port) and set(..., uint16_t port) when port = 0
 		return setIntern(ex, host, uint16_t(0), resolveHost);
 	uint16_t number;
-	if (!String::tryNumber(port, number)) {
+	if (!String::tryNumber(number, port)) {
 		ex.set<Ex::Net::Address::Port>("Invalid port number ", port);
 		return false;
 	}

@@ -33,7 +33,7 @@ struct PersistentData : private Thread, virtual Object {
 
 	void load(Exception& ex, const std::string& rootDir, const ForEach& forEach, bool disableTransaction = false);
 
-/*!
+/**
 	Add an persitant data */
 	void add(const char* path, const Packet& packet) { newEntry(path, packet); }
 	void add(const std::string& path, const Packet& packet) { add(path.c_str(), packet); }

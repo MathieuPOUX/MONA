@@ -115,7 +115,7 @@ RESET:
 			}
 
 			if (++_current == _packet.end()) {
-				_ex.set<Ex::Format>("XML element without tag name");
+				_ex.set<Ex::Format::Invalid>("XML element without tag name");
 				return RESULT_ERROR;
 			}
 
@@ -127,7 +127,7 @@ RESET:
 				//// END ELEMENT ////
 
 				if (_tags.empty()) {
-					_ex.set<Ex::Format>("XML end element without starting before");
+					_ex.set<Ex::Format::Invalid>("XML end element without starting before");
 					return RESULT_ERROR;
 				}
 
@@ -136,7 +136,7 @@ RESET:
 				size = tag.size;
 
 				if ((_current+size) >= _packet.end() || memcmp(name,++_current,size)!=0) {
-					_ex.set<Ex::Format>("XML end element is not the '",Packet(name,size),"' expected");
+					_ex.set<Ex::Format::Invalid>("XML end element is not the '",Packet(name,size),"' expected");
 					return RESULT_ERROR;
 				}
 				_current += size;
@@ -146,7 +146,7 @@ RESET:
 					++_current;
 			
 				if (_current == _packet.end() || *_current!='>') {
-					_ex.set<Ex::Format>("XML end '", Packet(name,size),"' element without > termination");
+					_ex.set<Ex::Format::Invalid>("XML end '", Packet(name,size),"' element without > termination");
 					return RESULT_ERROR;
 				}
 	
@@ -165,7 +165,7 @@ RESET:
 				//// COMMENT or CDATA ////
 
 				if (++_current == _packet.end()) {
-					_ex.set<Ex::Format>("XML comment or CDATA malformed");
+					_ex.set<Ex::Format::Invalid>("XML comment or CDATA malformed");
 					return RESULT_ERROR;
 				}
 
@@ -173,7 +173,7 @@ RESET:
 					/// CDATA ///
 
 					if (_tags.empty()) {
-						_ex.set<Ex::Format>("No XML CDATA inner value possible without a XML parent element");
+						_ex.set<Ex::Format::Invalid>("No XML CDATA inner value possible without a XML parent element");
 						return RESULT_ERROR;
 					}
 
@@ -189,7 +189,7 @@ RESET:
 					}
 		
 					if (_current == _packet.end()) {
-						_ex.set<Ex::Format>("XML CDATA without ]]> termination");
+						_ex.set<Ex::Format::Invalid>("XML CDATA without ]]> termination");
 						return RESULT_ERROR;
 					}
 				
@@ -200,7 +200,7 @@ RESET:
 
 					char delimiter1 = *_current;
 					if (++_current == _packet.end()) {
-						_ex.set<Ex::Format>("XML comment malformed");
+						_ex.set<Ex::Format::Invalid>("XML comment malformed");
 						return RESULT_ERROR;
 					}
 					char delimiter2 = *_current;
@@ -211,7 +211,7 @@ RESET:
 					}
 
 					if (_current == _packet.end()) {
-						_ex.set<Ex::Format>("XML comment without > termination");
+						_ex.set<Ex::Format::Invalid>("XML comment without > termination");
 						return RESULT_ERROR;
 					}
 
@@ -230,7 +230,7 @@ RESET:
 
 				bool isInfos(*_current == '?');
 				if (isInfos && ++_current == _packet.end()) {
-					_ex.set<Ex::Format>("XML info element without name");
+					_ex.set<Ex::Format::Invalid>("XML info element without name");
 					return RESULT_ERROR;
 				}
 
@@ -249,20 +249,20 @@ RESET:
 					// skip space
 					while (isspace(*_current)) {
 							if (++_current==_packet.end())  {
-							_ex.set<Ex::Format>("XML element '", Packet(name,size),"' without termination");
+							_ex.set<Ex::Format::Invalid>("XML element '", Packet(name,size),"' without termination");
 							return RESULT_ERROR;
 						}
 					}
 				
 					if (isInfos && (*_current == '?')) {
 						if (++_current == _packet.end() || *_current!='>') {
-							_ex.set<Ex::Format>("XML info '",Packet(name,size),"' without ?> termination");
+							_ex.set<Ex::Format::Invalid>("XML info '",Packet(name,size),"' without ?> termination");
 							return RESULT_ERROR;
 						}
 						break;
 					} else if (*_current == '/') {
 						if (++_current == _packet.end() || *_current!='>') {
-							_ex.set<Ex::Format>("XML element '", Packet(name,size),"' without termination");
+							_ex.set<Ex::Format::Invalid>("XML element '", Packet(name,size),"' without termination");
 							return RESULT_ERROR;
 						}
 						tag.full = true;
@@ -281,7 +281,7 @@ RESET:
 					// skip space
 					while(isspace(*_current)) {
 						if (++_current == _packet.end()) {
-							_ex.set<Ex::Format>("XML attribute '", Packet(key,sizeKey),"' without value");
+							_ex.set<Ex::Format::Invalid>("XML attribute '", Packet(key,sizeKey),"' without value");
 							return RESULT_ERROR;
 						}
 						if (*_current == '=')
@@ -291,14 +291,14 @@ RESET:
 					// =
 
 					if (++_current==_packet.end()) {
-						_ex.set<Ex::Format>("XML attribute '", Packet(key,sizeKey),"' without value");
+						_ex.set<Ex::Format::Invalid>("XML attribute '", Packet(key,sizeKey),"' without value");
 						return RESULT_ERROR;
 					}
 
 					// skip space
 					while(isspace(*_current)) {
 						if (++_current == _packet.end()) {
-							_ex.set<Ex::Format>("XML attribute '", Packet(key,sizeKey),"' without value");
+							_ex.set<Ex::Format::Invalid>("XML attribute '", Packet(key,sizeKey),"' without value");
 							return RESULT_ERROR;
 						}
 					}
@@ -308,7 +308,7 @@ RESET:
 					char delimiter(*_current);
 
 					if ((delimiter != '"' && delimiter != '\'') || ++_current==_packet.end()) {
-						_ex.set<Ex::Format>("XML attribute '", Packet(key,sizeKey),"' without value");
+						_ex.set<Ex::Format::Invalid>("XML attribute '", Packet(key,sizeKey),"' without value");
 						return RESULT_ERROR;
 					}
 
@@ -322,13 +322,13 @@ RESET:
 					while (*_current != delimiter) {
 						if (*_current== '\\') {
 							if (++_current == _packet.end()) {
-								_ex.set<Ex::Format>("XML attribute '", Packet(key,sizeKey),"' with malformed value");
+								_ex.set<Ex::Format::Invalid>("XML attribute '", Packet(key,sizeKey),"' with malformed value");
 								return RESULT_ERROR;
 							}
 							++sizeValue;
 						}
 						if(++_current==_packet.end()) {
-							_ex.set<Ex::Format>("XML attribute '", Packet(key,sizeKey),"' with malformed value");
+							_ex.set<Ex::Format::Invalid>("XML attribute '", Packet(key,sizeKey),"' with malformed value");
 							return RESULT_ERROR;
 						}
 						++sizeValue;
@@ -345,7 +345,7 @@ RESET:
 
 
 				if (_current==_packet.end())  {
-					_ex.set<Ex::Format>("XML element '", Packet(name,size),"' without > termination");
+					_ex.set<Ex::Format::Invalid>("XML element '", Packet(name,size),"' without > termination");
 					return RESULT_ERROR;
 				}
 			
@@ -387,7 +387,7 @@ RESET:
 					innerSpaceRemovables = 0;
 			} else if (!isspace(*_current)) {
 				if (_tags.empty()) {
-					_ex.set<Ex::Format>("No XML inner value possible without a XML parent element");
+					_ex.set<Ex::Format::Invalid>("No XML inner value possible without a XML parent element");
 					return RESULT_ERROR;
 				}
 				_pInner.set().append(_current, 1);
@@ -405,7 +405,7 @@ RESET:
 		if (_reseted)
 			goto RESET;
 	} else if (!_tags.empty()) {
-		_ex.set<Ex::Format>("No XML end '", Packet(_tags.back().name, _tags.back().size), "' element");
+		_ex.set<Ex::Format::Invalid>("No XML end '", Packet(_tags.back().name, _tags.back().size), "' element");
 		return RESULT_ERROR;
 	}
 
@@ -416,7 +416,7 @@ RESET:
 const char* XMLParser::parseXMLName(const char* endMarkers, uint32_t& size) {
 
 	if (!isalpha(*_current) && *_current!='_')  {
-		_ex.set<Ex::Format>("XML name must start with an alphabetic character");
+		_ex.set<Ex::Format::Invalid>("XML name must start with an alphabetic character");
 		return NULL;
 	}
 	const char* name(_current++);
@@ -424,7 +424,7 @@ const char* XMLParser::parseXMLName(const char* endMarkers, uint32_t& size) {
 		++_current;
 	size = (_current - name);
 	if (_current==_packet.end() || (!strchr(endMarkers,*_current) && !isspace(*_current)))  {
-		_ex.set<Ex::Format>("XML name '", Packet(name,size),"' without termination");
+		_ex.set<Ex::Format::Invalid>("XML name '", Packet(name,size),"' without termination");
 		return NULL;
 	}
 	return name;

@@ -171,7 +171,7 @@ bool Application::init(int argc, const char* argv[]) {
 
 void Application::displayHelp() {
 	HelpFormatter::Description description(_file.name().c_str(), _options);
-	String::Append(description.usage, " [/currentDir/[", _file.baseName(), ".ini]]");
+	String::append(description.usage, " [/currentDir/[", _file.baseName(), ".ini]]");
 	description.header = get("description", name()).c_str();
 	HelpFormatter::Format(std::cout, description);
 }
@@ -190,7 +190,7 @@ void Application::defineOptions(Exception& ex, Options& options) {
 	options.add(ex, "log", "l", "Log level argument, must be beetween 0 and 8 : nothing, fatal, critic, error, warn, note, info, debug, trace. Default value is 6 (info), all logs until info level are displayed.")
 		.argument("level")
 		.handler([](Exception& ex, const char* value) {
-			Logs::SetLevel(String::toNumber<uint8_t>(value, strlen(value), LOG_DEFAULT));
+			Logs::SetLevel(String::toNumber<LOG_LEVEL>(value, strlen(value), LOG_DEFAULT));
 			return true;
 		});
 
@@ -247,7 +247,7 @@ void Application::onParamChange(const string& key, const string* pValue) {
 
 		DEBUG("Defaut socket buffers set to ", Net::GetRecvBufferSize(), "B in reception and ", Net::GetSendBufferSize(), "B in sends");
 	} else if (String::ICompare(key, "logs.level") == 0) {
-		uint8_t level = get<uint8_t>("arguments.log", LOG_DEFAULT);
+		LOG_LEVEL level = get<LOG_LEVEL>("arguments.log", LOG_DEFAULT);
 		if (pValue)
 			String::toNumber(*pValue, level);
 		Logs::SetLevel(level);
@@ -256,7 +256,7 @@ void Application::onParamChange(const string& key, const string* pValue) {
 	Parameters::onParamChange(key, pValue);
 }
 void Application::onParamClear() {
-	Logs::SetLevel(get<uint8_t>("arguments.log", LOG_DEFAULT));
+	Logs::SetLevel(get<LOG_LEVEL>("arguments.log", LOG_DEFAULT));
 	Net::ResetRecvBufferSize();
 	Net::ResetSendBufferSize();
 	Parameters::onParamClear();

@@ -20,6 +20,25 @@ using namespace std;
 
 namespace Mona {
 
+const char* Path::Short(const char* path, size_t size) {
+	if (size == string::npos) {
+		size = strlen(path);
+	}
+	const char* cur(path + size);
+	const char* name = NULL;
+	while (cur-- > path) {
+		if (*cur == '/' || *cur == '\\') {
+			if (name) // end!
+				break;
+			name = cur;
+		}
+	}
+	++cur;
+	if (name && (String::IEqual(cur, name - cur, "sources") || String::IEqual(cur, name - cur, "mona")))
+		return name + 1;
+	return cur;
+}
+
 void Path::Impl::init() {
 	size_t extPos;
 	_type = FileSystem::GetFile(_path, _name, extPos, _parent);

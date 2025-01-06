@@ -21,16 +21,16 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 Thread Safe class to compute ByteRate */
 struct LostRate : virtual Object {
 	LostRate(ByteRate& byteRate) : _byteRate(byteRate) {}
-	/*!
+	/**
 	Add bytes to next byte rate calculation */
 	LostRate& operator+=(uint32_t lost) { _lostRate += lost; return *this; }
 	LostRate& operator++() { ++_lostRate; return *this; }
 	LostRate& operator=(uint32_t lost) { _lostRate = lost; return *this; }
-	/*!
+	/**
 	Returns byte rate */
 	operator double() const { double lost(_lostRate.exact()); return lost ? (lost / (lost + _byteRate.exact())) : 0; }
 	double operator()() const { return this->operator double(); }

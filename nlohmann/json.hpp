@@ -2559,7 +2559,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
     #define JSON_PRIVATE_UNLESS_TESTED private
 #endif
 
-/*!
+/**
 @brief macro to briefly define a mapping between an enum and JSON
 @def NLOHMANN_JSON_SERIALIZE_ENUM
 @since version 3.4.0
@@ -2745,7 +2745,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #define NLOHMANN_JSON_FROM(v1) nlohmann_json_j.at(#v1).get_to(nlohmann_json_t.v1);
 #define NLOHMANN_JSON_FROM_WITH_DEFAULT(v1) nlohmann_json_t.v1 = nlohmann_json_j.value(#v1, nlohmann_json_default_obj.v1);
 
-/*!
+/**
 @brief macro
 @def NLOHMANN_DEFINE_TYPE_INTRUSIVE
 @since version 3.9.0
@@ -2761,7 +2761,7 @@ JSON_HEDLEY_DIAGNOSTIC_POP
 #define NLOHMANN_DEFINE_TYPE_INTRUSIVE_ONLY_SERIALIZE(Type, ...)  \
     friend void to_json(nlohmann::json& nlohmann_json_j, const Type& nlohmann_json_t) { NLOHMANN_JSON_EXPAND(NLOHMANN_JSON_PASTE(NLOHMANN_JSON_TO, __VA_ARGS__)) }
 
-/*!
+/**
 @brief macro
 @def NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE
 @since version 3.9.0
@@ -2845,7 +2845,7 @@ namespace detail
 // JSON type enumeration //
 ///////////////////////////
 
-/*!
+/**
 @brief the JSON type enumeration
 
 This enumeration collects the different JSON types. It is internally used to
@@ -2883,7 +2883,7 @@ enum class value_t : std::uint8_t
     discarded         ///< discarded by the parser callback function
 };
 
-/*!
+/**
 @brief comparison operator for JSON types
 
 Returns an ordering that is similar to Python:
@@ -2954,7 +2954,7 @@ NLOHMANN_JSON_NAMESPACE_BEGIN
 namespace detail
 {
 
-/*!
+/**
 @brief replace all occurrences of a substring by another string
 
 @param[in,out] s  the string to manipulate; changed so that all
@@ -2979,7 +2979,7 @@ inline void replace_substring(StringType& s, const StringType& f,
     {}
 }
 
-/*!
+/**
  * @brief string escaping as described in RFC 6901 (Sect. 4)
  * @param[in] s string to escape
  * @return    escaped string
@@ -2994,7 +2994,7 @@ inline StringType escape(StringType s)
     return s;
 }
 
-/*!
+/**
  * @brief string unescaping as described in RFC 6901 (Sect. 4)
  * @param[in] s string to unescape
  * @return    unescaped string
@@ -3377,14 +3377,14 @@ NLOHMANN_JSON_NAMESPACE_END
     // #include <nlohmann/detail/abi_macros.hpp>
 
 
-    /*!
+    /**
     @brief namespace for Niels Lohmann
     @see https://github.com/nlohmann
     @since version 1.0.0
     */
     NLOHMANN_JSON_NAMESPACE_BEGIN
 
-    /*!
+    /**
     @brief default JSONSerializer template argument
 
     This serializer ignores the template arguments and uses ADL
@@ -3415,7 +3415,7 @@ NLOHMANN_JSON_NAMESPACE_END
     template<typename RefStringType>
     class json_pointer;
 
-    /*!
+    /**
     @brief default specialization
     @sa https://json.nlohmann.me/api/json/
     */
@@ -3436,7 +3436,7 @@ NLOHMANN_JSON_NAMESPACE_END
 
 
 NLOHMANN_JSON_NAMESPACE_BEGIN
-/*!
+/**
 @brief detail namespace with internal helper functions
 
 This namespace collects functions that should not be exposed,
@@ -4469,7 +4469,7 @@ class exception : public std::exception
 class parse_error : public exception
 {
   public:
-    /*!
+    /**
     @brief create a parse error exception
     @param[in] id_       the id of the exception
     @param[in] pos       the position where the error occurred (or with
@@ -4495,7 +4495,7 @@ class parse_error : public exception
         return {id_, byte_, w.c_str()};
     }
 
-    /*!
+    /**
     @brief byte index of the parse error
 
     The byte index of the last read character in the input file.
@@ -6007,7 +6007,7 @@ inline std::size_t combine(std::size_t seed, std::size_t h) noexcept
     return seed;
 }
 
-/*!
+/**
 @brief hash a JSON value
 
 The hash function tries to rely on std::hash where possible. Furthermore, the
@@ -6180,7 +6180,7 @@ enum class input_format_t { json, cbor, msgpack, ubjson, bson, bjdata };
 ////////////////////
 
 #ifndef JSON_NO_IO
-/*!
+/**
 Input adapter for stdio file access. This adapter read only 1 byte and do not use any
  buffer. This adapter is a very low level adapter.
 */
@@ -6213,7 +6213,7 @@ class file_input_adapter
     std::FILE* m_file;
 };
 
-/*!
+/**
 Input adapter for a (caching) istream. Ignores a UFT Byte Order Mark at
 beginning of input. Does not support changing the underlying std::streambuf
 in mid-input. Maintains underlying std::istream and std::streambuf to support
@@ -6657,7 +6657,7 @@ NLOHMANN_JSON_NAMESPACE_END
 
 NLOHMANN_JSON_NAMESPACE_BEGIN
 
-/*!
+/**
 @brief SAX interface
 
 This class describes the SAX interface used by @ref nlohmann::json::sax_parse.
@@ -6674,34 +6674,34 @@ struct json_sax
     using string_t = typename BasicJsonType::string_t;
     using binary_t = typename BasicJsonType::binary_t;
 
-    /*!
+    /**
     @brief a null value was read
     @return whether parsing should proceed
     */
     virtual bool null() = 0;
 
-    /*!
+    /**
     @brief a boolean value was read
     @param[in] val  boolean value
     @return whether parsing should proceed
     */
     virtual bool boolean(bool val) = 0;
 
-    /*!
+    /**
     @brief an integer number was read
     @param[in] val  integer value
     @return whether parsing should proceed
     */
     virtual bool number_integer(number_integer_t val) = 0;
 
-    /*!
+    /**
     @brief an unsigned integer number was read
     @param[in] val  unsigned integer value
     @return whether parsing should proceed
     */
     virtual bool number_unsigned(number_unsigned_t val) = 0;
 
-    /*!
+    /**
     @brief a floating-point number was read
     @param[in] val  floating-point value
     @param[in] s    raw token value
@@ -6709,7 +6709,7 @@ struct json_sax
     */
     virtual bool number_float(number_float_t val, const string_t& s) = 0;
 
-    /*!
+    /**
     @brief a string value was read
     @param[in] val  string value
     @return whether parsing should proceed
@@ -6717,7 +6717,7 @@ struct json_sax
     */
     virtual bool string(string_t& val) = 0;
 
-    /*!
+    /**
     @brief a binary value was read
     @param[in] val  binary value
     @return whether parsing should proceed
@@ -6725,7 +6725,7 @@ struct json_sax
     */
     virtual bool binary(binary_t& val) = 0;
 
-    /*!
+    /**
     @brief the beginning of an object was read
     @param[in] elements  number of object elements or -1 if unknown
     @return whether parsing should proceed
@@ -6733,7 +6733,7 @@ struct json_sax
     */
     virtual bool start_object(std::size_t elements) = 0;
 
-    /*!
+    /**
     @brief an object key was read
     @param[in] val  object key
     @return whether parsing should proceed
@@ -6741,13 +6741,13 @@ struct json_sax
     */
     virtual bool key(string_t& val) = 0;
 
-    /*!
+    /**
     @brief the end of an object was read
     @return whether parsing should proceed
     */
     virtual bool end_object() = 0;
 
-    /*!
+    /**
     @brief the beginning of an array was read
     @param[in] elements  number of array elements or -1 if unknown
     @return whether parsing should proceed
@@ -6755,13 +6755,13 @@ struct json_sax
     */
     virtual bool start_array(std::size_t elements) = 0;
 
-    /*!
+    /**
     @brief the end of an array was read
     @return whether parsing should proceed
     */
     virtual bool end_array() = 0;
 
-    /*!
+    /**
     @brief a parse error occurred
     @param[in] position    the position in the input where the error occurs
     @param[in] last_token  the last read token
@@ -6782,7 +6782,7 @@ struct json_sax
 
 namespace detail
 {
-/*!
+/**
 @brief SAX implementation to create a JSON value from SAX events
 
 This class implements the @ref json_sax interface and processes the SAX events
@@ -6805,7 +6805,7 @@ class json_sax_dom_parser
     using string_t = typename BasicJsonType::string_t;
     using binary_t = typename BasicJsonType::binary_t;
 
-    /*!
+    /**
     @param[in,out] r  reference to a JSON value that is manipulated while
                        parsing
     @param[in] allow_exceptions_  whether parse errors yield exceptions
@@ -6936,7 +6936,7 @@ class json_sax_dom_parser
     }
 
   private:
-    /*!
+    /**
     @invariant If the ref stack is empty, then the passed value will be the new
                root.
     @invariant If the ref stack contains a value, then it is an array or an
@@ -7186,7 +7186,7 @@ class json_sax_dom_callback_parser
     }
 
   private:
-    /*!
+    /**
     @param[in] v  value to add to the JSON value we build during parsing
     @param[in] skip_callback  whether we should skip calling the callback
                function; this is required after start_array() and
@@ -7474,7 +7474,7 @@ class lexer_base
         }
     }
 };
-/*!
+/**
 @brief lexical analysis
 
 This class organizes the lexical analysis during JSON deserialization.
@@ -7523,7 +7523,7 @@ class lexer : public lexer_base<BasicJsonType>
     // scan functions
     /////////////////////
 
-    /*!
+    /**
     @brief get codepoint from 4 hex characters following `\u`
 
     For input "\u c1 c2 c3 c4" the codepoint is:
@@ -7571,7 +7571,7 @@ class lexer : public lexer_base<BasicJsonType>
         return codepoint;
     }
 
-    /*!
+    /**
     @brief check if the next byte(s) are inside a given range
 
     Adds the current byte and, for each passed range, reads a new byte and
@@ -7608,7 +7608,7 @@ class lexer : public lexer_base<BasicJsonType>
         return true;
     }
 
-    /*!
+    /**
     @brief scan a string literal
 
     This function scans a string according to Sect. 7 of RFC 8259. While
@@ -8209,7 +8209,7 @@ class lexer : public lexer_base<BasicJsonType>
         }
     }
 
-    /*!
+    /**
      * @brief scan a comment
      * @return whether comment could be scanned successfully
      */
@@ -8298,7 +8298,7 @@ class lexer : public lexer_base<BasicJsonType>
         f = std::strtold(str, endptr);
     }
 
-    /*!
+    /**
     @brief scan a number literal
 
     This function scans a string according to Sect. 6 of RFC 8259.
@@ -8663,7 +8663,7 @@ scan_number_done:
         return token_type::value_float;
     }
 
-    /*!
+    /**
     @param[in] literal_text  the literal text to expect
     @param[in] length        the length of the passed literal text
     @param[in] return_type   the token type to return on success
@@ -8735,7 +8735,7 @@ scan_number_done:
         return current;
     }
 
-    /*!
+    /**
     @brief unget current character (read it again on next get)
 
     We implement unget by setting variable next_unget to true. The input is not
@@ -8851,7 +8851,7 @@ scan_number_done:
     // actual scanner
     /////////////////////
 
-    /*!
+    /**
     @brief skip the UTF-8 byte order mark
     @return true iff there is no BOM or the correct BOM has been skipped
     */
@@ -9188,7 +9188,7 @@ enum class cbor_tag_handler_t
     store    ///< store tags as binary type
 };
 
-/*!
+/**
 @brief determine system byte order
 
 @return true if and only if system's byte order is little endian
@@ -9204,7 +9204,7 @@ static inline bool little_endianness(int num = 1) noexcept
 // binary reader //
 ///////////////////
 
-/*!
+/**
 @brief deserialization of CBOR, MessagePack, and UBJSON values
 */
 template<typename BasicJsonType, typename InputAdapterType, typename SAX = json_sax_dom_parser<BasicJsonType>>
@@ -9220,7 +9220,7 @@ class binary_reader
     using char_int_type = typename char_traits<char_type>::int_type;
 
   public:
-    /*!
+    /**
     @brief create a binary reader
 
     @param[in] adapter  input adapter to read from
@@ -9237,7 +9237,7 @@ class binary_reader
     binary_reader& operator=(binary_reader&&) = default; // NOLINT(hicpp-noexcept-move,performance-noexcept-move-constructor)
     ~binary_reader() = default;
 
-    /*!
+    /**
     @param[in] format  the binary format to parse
     @param[in] sax_    a SAX event processor
     @param[in] strict  whether to expect the input to be consumed completed
@@ -9305,7 +9305,7 @@ class binary_reader
     // BSON //
     //////////
 
-    /*!
+    /**
     @brief Reads in a BSON-object and passes it to the SAX-parser.
     @return whether a valid BSON-value was passed to the SAX parser
     */
@@ -9327,7 +9327,7 @@ class binary_reader
         return sax->end_object();
     }
 
-    /*!
+    /**
     @brief Parses a C-style string from the BSON input.
     @param[in,out] result  A reference to the string variable where the read
                             string is to be stored.
@@ -9352,7 +9352,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @brief Parses a zero-terminated string of length @a len from the BSON
            input.
     @param[in] len  The length (including the zero-byte at the end) of the
@@ -9376,7 +9376,7 @@ class binary_reader
         return get_string(input_format_t::bson, len - static_cast<NumberType>(1), result) && get() != char_traits<char_type>::eof();
     }
 
-    /*!
+    /**
     @brief Parses a byte array input of length @a len from the BSON input.
     @param[in] len  The length of the byte array to be read.
     @param[in,out] result  A reference to the binary variable where the read
@@ -9403,7 +9403,7 @@ class binary_reader
         return get_binary(input_format_t::bson, len, result);
     }
 
-    /*!
+    /**
     @brief Read a BSON document element of the given @a element_type.
     @param[in] element_type The BSON element type, c.f. http://bsonspec.org/spec.html
     @param[in] element_type_parse_position The position in the input stream,
@@ -9481,7 +9481,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @brief Read a BSON element list (as specified in the BSON-spec)
 
     The same binary layout is used for objects and arrays, hence it must be
@@ -9527,7 +9527,7 @@ class binary_reader
         return true;
     }
 
-    /*!
+    /**
     @brief Reads an array from the BSON input and passes it to the SAX-parser.
     @return whether a valid BSON-array was passed to the SAX parser
     */
@@ -9553,7 +9553,7 @@ class binary_reader
     // CBOR //
     //////////
 
-    /*!
+    /**
     @param[in] get_char  whether a new character should be retrieved from the
                          input (true) or whether the last read character should
                          be considered instead (false)
@@ -10041,7 +10041,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @brief reads a CBOR string
 
     This function first reads starting bytes to determine the expected
@@ -10137,7 +10137,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @brief reads a CBOR byte array
 
     This function first reads starting bytes to determine the expected
@@ -10237,7 +10237,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @param[in] len  the length of the array or static_cast<std::size_t>(-1) for an
                     array of indefinite size
     @param[in] tag_handler how CBOR tags should be treated
@@ -10275,7 +10275,7 @@ class binary_reader
         return sax->end_array();
     }
 
-    /*!
+    /**
     @param[in] len  the length of the object or static_cast<std::size_t>(-1) for an
                     object of indefinite size
     @param[in] tag_handler how CBOR tags should be treated
@@ -10334,7 +10334,7 @@ class binary_reader
     // MsgPack //
     /////////////
 
-    /*!
+    /**
     @return whether a valid MessagePack value was passed to the SAX parser
     */
     bool parse_msgpack_internal()
@@ -10708,7 +10708,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @brief reads a MessagePack string
 
     This function first reads starting bytes to determine the expected
@@ -10791,7 +10791,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @brief reads a MessagePack byte array
 
     This function first reads starting bytes to determine the expected
@@ -10908,7 +10908,7 @@ class binary_reader
         }
     }
 
-    /*!
+    /**
     @param[in] len  the length of the array
     @return whether array creation completed
     */
@@ -10930,7 +10930,7 @@ class binary_reader
         return sax->end_array();
     }
 
-    /*!
+    /**
     @param[in] len  the length of the object
     @return whether object creation completed
     */
@@ -10964,7 +10964,7 @@ class binary_reader
     // UBJSON //
     ////////////
 
-    /*!
+    /**
     @param[in] get_char  whether a new character should be retrieved from the
                          input (true, default) or whether the last read
                          character should be considered instead
@@ -10976,7 +10976,7 @@ class binary_reader
         return get_ubjson_value(get_char ? get_ignore_noop() : current);
     }
 
-    /*!
+    /**
     @brief reads a UBJSON string
 
     This function is either called after reading the 'S' byte explicitly
@@ -11081,7 +11081,7 @@ class binary_reader
         return sax->parse_error(chars_read, last_token, parse_error::create(113, chars_read, exception_message(input_format, message, "string"), nullptr));
     }
 
-    /*!
+    /**
     @param[out] dim  an integer vector storing the ND array dimensions
     @return whether reading ND array size vector is successful
     */
@@ -11139,7 +11139,7 @@ class binary_reader
         return true;
     }
 
-    /*!
+    /**
     @param[out] result  determined size
     @param[in,out] is_ndarray  for input, `true` means already inside an ndarray vector
                                or ndarray dimension is not allowed; `false` means ndarray
@@ -11362,7 +11362,7 @@ class binary_reader
         return sax->parse_error(chars_read, last_token, parse_error::create(113, chars_read, exception_message(input_format, message, "size"), nullptr));
     }
 
-    /*!
+    /**
     @brief determine the type and size for a container
 
     In the optimized UBJSON format, a type and a size can be provided to allow
@@ -11436,7 +11436,7 @@ class binary_reader
         return true;
     }
 
-    /*!
+    /**
     @param prefix  the previously read or set type prefix
     @return whether value creation completed
     */
@@ -11620,7 +11620,7 @@ class binary_reader
         return sax->parse_error(chars_read, last_token, parse_error::create(112, chars_read, exception_message(input_format, "invalid byte: 0x" + last_token, "value"), nullptr));
     }
 
-    /*!
+    /**
     @return whether array creation completed
     */
     bool get_ubjson_array()
@@ -11728,7 +11728,7 @@ class binary_reader
         return sax->end_array();
     }
 
-    /*!
+    /**
     @return whether object creation completed
     */
     bool get_ubjson_object()
@@ -11884,7 +11884,7 @@ class binary_reader
     // Utility functions //
     ///////////////////////
 
-    /*!
+    /**
     @brief get next character from the input
 
     This function provides the interface to the used input adapter. It does
@@ -11899,7 +11899,7 @@ class binary_reader
         return current = ia.get_character();
     }
 
-    /*!
+    /**
     @return character read from the input after ignoring all 'N' entries
     */
     char_int_type get_ignore_noop()
@@ -11957,7 +11957,7 @@ class binary_reader
         return true;
     }
 
-    /*!
+    /**
     @brief create a string by reading characters from the input
 
     @tparam NumberType the type of the number
@@ -11990,7 +11990,7 @@ class binary_reader
         return success;
     }
 
-    /*!
+    /**
     @brief create a byte array by reading bytes from the input
 
     @tparam NumberType the type of the number
@@ -12023,7 +12023,7 @@ class binary_reader
         return success;
     }
 
-    /*!
+    /**
     @param[in] format   the current format (for diagnostics)
     @param[in] context  further context information (for diagnostics)
     @return whether the last read character is not EOF
@@ -12039,7 +12039,7 @@ class binary_reader
         return true;
     }
 
-    /*!
+    /**
     @return a string representation of the last read byte
     */
     std::string get_token_string() const
@@ -12049,7 +12049,7 @@ class binary_reader
         return std::string{cr.data()};
     }
 
-    /*!
+    /**
     @param[in] format   the current format
     @param[in] detail   a detailed error message
     @param[in] context  further context information
@@ -12219,7 +12219,7 @@ template<typename BasicJsonType>
 using parser_callback_t =
     std::function<bool(int /*depth*/, parse_event_t /*event*/, BasicJsonType& /*parsed*/)>;
 
-/*!
+/**
 @brief syntax analysis
 
 This class implements a recursive descent parser.
@@ -12248,7 +12248,7 @@ class parser
         get_token();
     }
 
-    /*!
+    /**
     @brief public parser interface
 
     @param[in] strict      whether to expect the last token to be EOF
@@ -12312,7 +12312,7 @@ class parser
         result.assert_invariant();
     }
 
-    /*!
+    /**
     @brief public accept interface
 
     @param[in] strict  whether to expect the last token to be EOF
@@ -12839,7 +12839,7 @@ NLOHMANN_JSON_NAMESPACE_BEGIN
 namespace detail
 {
 
-/*!
+/**
 @brief an iterator value
 
 @note This structure could easily be a union, but MSVC currently does not allow
@@ -12895,7 +12895,7 @@ namespace detail
 template<typename IteratorType> class iteration_proxy;
 template<typename IteratorType> class iteration_proxy_value;
 
-/*!
+/**
 @brief a template for a bidirectional iterator for the @ref basic_json class
 This class implements a both iterators (iterator and const_iterator) for the
 @ref basic_json class.
@@ -12959,7 +12959,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
     iter_impl(iter_impl&&) noexcept = default;
     iter_impl& operator=(iter_impl&&) noexcept = default;
 
-    /*!
+    /**
     @brief constructor for a given JSON instance
     @param[in] object  pointer to a JSON object for this iterator
     @pre object != nullptr
@@ -12999,7 +12999,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @note The conventional copy constructor and copy assignment are implicitly
           defined. Combined with the following converting constructor and
           assignment, they support: (1) copy from iterator to iterator, (2)
@@ -13008,7 +13008,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
           to iterator is not defined.
     */
 
-    /*!
+    /**
     @brief const copy constructor
     @param[in] other const iterator to copy from
     @note This copy constructor had to be defined explicitly to circumvent a bug
@@ -13019,7 +13019,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         : m_object(other.m_object), m_it(other.m_it)
     {}
 
-    /*!
+    /**
     @brief converting assignment
     @param[in] other const iterator to copy from
     @return const/non-const iterator
@@ -13035,7 +13035,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return *this;
     }
 
-    /*!
+    /**
     @brief converting constructor
     @param[in] other  non-const iterator to copy from
     @note It is not checked whether @a other is initialized.
@@ -13044,7 +13044,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         : m_object(other.m_object), m_it(other.m_it)
     {}
 
-    /*!
+    /**
     @brief converting assignment
     @param[in] other  non-const iterator to copy from
     @return const/non-const iterator
@@ -13058,7 +13058,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
     }
 
   JSON_PRIVATE_UNLESS_TESTED:
-    /*!
+    /**
     @brief set the iterator to the first value
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13102,7 +13102,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @brief set the iterator past the last value
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13141,7 +13141,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
     }
 
   public:
-    /*!
+    /**
     @brief return a reference to the value pointed to by the iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13185,7 +13185,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @brief dereference the iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13227,7 +13227,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @brief post-increment (it++)
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13238,7 +13238,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return result;
     }
 
-    /*!
+    /**
     @brief pre-increment (++it)
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13278,7 +13278,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return *this;
     }
 
-    /*!
+    /**
     @brief post-decrement (it--)
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13289,7 +13289,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return result;
     }
 
-    /*!
+    /**
     @brief pre-decrement (--it)
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13329,7 +13329,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return *this;
     }
 
-    /*!
+    /**
     @brief comparison: equal
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13365,7 +13365,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @brief comparison: not equal
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13375,7 +13375,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return !operator==(other);
     }
 
-    /*!
+    /**
     @brief comparison: smaller
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13410,7 +13410,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @brief comparison: less than or equal
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13419,7 +13419,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return !other.operator < (*this);
     }
 
-    /*!
+    /**
     @brief comparison: greater than
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13428,7 +13428,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return !operator<=(other);
     }
 
-    /*!
+    /**
     @brief comparison: greater than or equal
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13437,7 +13437,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return !operator<(other);
     }
 
-    /*!
+    /**
     @brief add to iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13474,7 +13474,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return *this;
     }
 
-    /*!
+    /**
     @brief subtract from iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13483,7 +13483,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return operator+=(-i);
     }
 
-    /*!
+    /**
     @brief add to iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13494,7 +13494,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return result;
     }
 
-    /*!
+    /**
     @brief addition of distance and iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13505,7 +13505,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return result;
     }
 
-    /*!
+    /**
     @brief subtract from iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13516,7 +13516,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         return result;
     }
 
-    /*!
+    /**
     @brief return difference
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13545,7 +13545,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @brief access to successor
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13583,7 +13583,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         }
     }
 
-    /*!
+    /**
     @brief return the key of an object iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13599,7 +13599,7 @@ class iter_impl // NOLINT(cppcoreguidelines-special-member-functions,hicpp-speci
         JSON_THROW(invalid_iterator::create(207, "cannot use key() for non-object iterators", m_object));
     }
 
-    /*!
+    /**
     @brief return the value of an iterator
     @pre The iterator is initialized; i.e. `m_object != nullptr`.
     */
@@ -13646,7 +13646,7 @@ namespace detail
 // reverse_iterator //
 //////////////////////
 
-/*!
+/**
 @brief a template for a reverse iterator class
 
 @tparam Base the base iterator type to reverse. Valid types are @ref
@@ -13775,7 +13775,7 @@ NLOHMANN_JSON_NAMESPACE_BEGIN
 namespace detail
 {
 
-/*!
+/**
 @brief Default base class of the @ref basic_json class.
 
 So that the correct implementations of the copy / move ctors / assign operators
@@ -14005,7 +14005,7 @@ class json_pointer
     }
 
   private:
-    /*!
+    /**
     @param[in] s  reference token to be converted into an array index
 
     @return integer representation of @a s
@@ -14067,7 +14067,7 @@ class json_pointer
     }
 
   private:
-    /*!
+    /**
     @brief create and return a reference to the pointed to value
 
     @complexity Linear in the number of reference tokens.
@@ -14136,7 +14136,7 @@ class json_pointer
         return *result;
     }
 
-    /*!
+    /**
     @brief return a reference to the pointed to value
 
     @note This version does not throw if a value is not present, but tries to
@@ -14217,7 +14217,7 @@ class json_pointer
         return *ptr;
     }
 
-    /*!
+    /**
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
     @throw out_of_range.402  if the array index '-' is used
@@ -14268,7 +14268,7 @@ class json_pointer
         return *ptr;
     }
 
-    /*!
+    /**
     @brief return a const reference to the pointed to value
 
     @param[in] ptr  a JSON value
@@ -14324,7 +14324,7 @@ class json_pointer
         return *ptr;
     }
 
-    /*!
+    /**
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
     @throw out_of_range.402  if the array index '-' is used
@@ -14375,7 +14375,7 @@ class json_pointer
         return *ptr;
     }
 
-    /*!
+    /**
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
     */
@@ -14459,7 +14459,7 @@ class json_pointer
         return true;
     }
 
-    /*!
+    /**
     @brief split the string input to reference tokens
 
     @note This function is only called by the json_pointer constructor.
@@ -14529,7 +14529,7 @@ class json_pointer
     }
 
   private:
-    /*!
+    /**
     @param[in] reference_string  the reference string to the current value
     @param[in] value             the value to consider
     @param[in,out] result        the result object to insert values to
@@ -14597,7 +14597,7 @@ class json_pointer
         }
     }
 
-    /*!
+    /**
     @param[in] value  flattened JSON
 
     @return unflattened JSON
@@ -15071,7 +15071,7 @@ namespace detail
 // binary writer //
 ///////////////////
 
-/*!
+/**
 @brief serialization to CBOR and MessagePack values
 */
 template<typename BasicJsonType, typename CharType>
@@ -15082,7 +15082,7 @@ class binary_writer
     using number_float_t = typename BasicJsonType::number_float_t;
 
   public:
-    /*!
+    /**
     @brief create a binary writer
 
     @param[in] adapter  output adapter to write to
@@ -15092,7 +15092,7 @@ class binary_writer
         JSON_ASSERT(oa);
     }
 
-    /*!
+    /**
     @param[in] j  JSON value to serialize
     @pre       j.type() == value_t::object
     */
@@ -15122,7 +15122,7 @@ class binary_writer
         }
     }
 
-    /*!
+    /**
     @param[in] j  JSON value to serialize
     */
     void write_cbor(const BasicJsonType& j)
@@ -15446,7 +15446,7 @@ class binary_writer
         }
     }
 
-    /*!
+    /**
     @param[in] j  JSON value to serialize
     */
     void write_msgpack(const BasicJsonType& j)
@@ -15768,7 +15768,7 @@ class binary_writer
         }
     }
 
-    /*!
+    /**
     @param[in] j  JSON value to serialize
     @param[in] use_count   whether to use '#' prefixes (optimized format)
     @param[in] use_type    whether to use '$' prefixes (optimized format)
@@ -15992,7 +15992,7 @@ class binary_writer
     // BSON //
     //////////
 
-    /*!
+    /**
     @return The size of a BSON document entry header, including the id marker
             and the entry name size (and its null-terminator).
     */
@@ -16008,7 +16008,7 @@ class binary_writer
         return /*id*/ 1ul + name.size() + /*zero-terminator*/1u;
     }
 
-    /*!
+    /**
     @brief Writes the given @a element_type and @a name to the output adapter
     */
     void write_bson_entry_header(const string_t& name,
@@ -16020,7 +16020,7 @@ class binary_writer
             name.size() + 1u);
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and boolean value @a value
     */
     void write_bson_boolean(const string_t& name,
@@ -16030,7 +16030,7 @@ class binary_writer
         oa->write_character(value ? to_char_type(0x01) : to_char_type(0x00));
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and double value @a value
     */
     void write_bson_double(const string_t& name,
@@ -16040,7 +16040,7 @@ class binary_writer
         write_number<double>(value, true);
     }
 
-    /*!
+    /**
     @return The size of the BSON-encoded string in @a value
     */
     static std::size_t calc_bson_string_size(const string_t& value)
@@ -16048,7 +16048,7 @@ class binary_writer
         return sizeof(std::int32_t) + value.size() + 1ul;
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and string value @a value
     */
     void write_bson_string(const string_t& name,
@@ -16062,7 +16062,7 @@ class binary_writer
             value.size() + 1);
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and null value
     */
     void write_bson_null(const string_t& name)
@@ -16070,7 +16070,7 @@ class binary_writer
         write_bson_entry_header(name, 0x0A);
     }
 
-    /*!
+    /**
     @return The size of the BSON-encoded integer @a value
     */
     static std::size_t calc_bson_integer_size(const std::int64_t value)
@@ -16080,7 +16080,7 @@ class binary_writer
                : sizeof(std::int64_t);
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and integer @a value
     */
     void write_bson_integer(const string_t& name,
@@ -16098,7 +16098,7 @@ class binary_writer
         }
     }
 
-    /*!
+    /**
     @return The size of the BSON-encoded unsigned integer in @a j
     */
     static constexpr std::size_t calc_bson_unsigned_size(const std::uint64_t value) noexcept
@@ -16108,7 +16108,7 @@ class binary_writer
                : sizeof(std::int64_t);
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and unsigned @a value
     */
     void write_bson_unsigned(const string_t& name,
@@ -16130,7 +16130,7 @@ class binary_writer
         }
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and object @a value
     */
     void write_bson_object_entry(const string_t& name,
@@ -16140,7 +16140,7 @@ class binary_writer
         write_bson_object(value);
     }
 
-    /*!
+    /**
     @return The size of the BSON-encoded array @a value
     */
     static std::size_t calc_bson_array_size(const typename BasicJsonType::array_t& value)
@@ -16155,7 +16155,7 @@ class binary_writer
         return sizeof(std::int32_t) + embedded_document_size + 1ul;
     }
 
-    /*!
+    /**
     @return The size of the BSON-encoded binary array @a value
     */
     static std::size_t calc_bson_binary_size(const typename BasicJsonType::binary_t& value)
@@ -16163,7 +16163,7 @@ class binary_writer
         return sizeof(std::int32_t) + value.size() + 1ul;
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and array @a value
     */
     void write_bson_array(const string_t& name,
@@ -16182,7 +16182,7 @@ class binary_writer
         oa->write_character(to_char_type(0x00));
     }
 
-    /*!
+    /**
     @brief Writes a BSON element with key @a name and binary value @a value
     */
     void write_bson_binary(const string_t& name,
@@ -16196,7 +16196,7 @@ class binary_writer
         oa->write_characters(reinterpret_cast<const CharType*>(value.data()), value.size());
     }
 
-    /*!
+    /**
     @brief Calculates the size necessary to serialize the JSON value @a j with its @a name
     @return The calculated size for the BSON document entry for @a j with the given @a name.
     */
@@ -16242,7 +16242,7 @@ class binary_writer
         }
     }
 
-    /*!
+    /**
     @brief Serializes the JSON value @a j to BSON and associates it with the
            key @a name.
     @param name The name to associate with the JSON entity @a j within the
@@ -16289,7 +16289,7 @@ class binary_writer
         }
     }
 
-    /*!
+    /**
     @brief Calculates the size of the BSON serialization of the given
            JSON-object @a j.
     @param[in] value  JSON value to serialize
@@ -16306,7 +16306,7 @@ class binary_writer
         return sizeof(std::int32_t) + document_size + 1ul;
     }
 
-    /*!
+    /**
     @param[in] value  JSON value to serialize
     @pre       value.type() == value_t::object
     */
@@ -16537,7 +16537,7 @@ class binary_writer
         // LCOV_EXCL_STOP
     }
 
-    /*!
+    /**
     @brief determine the type prefix of container values
     */
     CharType ubjson_prefix(const BasicJsonType& j, const bool use_bjdata) const noexcept
@@ -16651,7 +16651,7 @@ class binary_writer
         return 'D';  // float 64
     }
 
-    /*!
+    /**
     @return false if the object is successfully converted to a bjdata ndarray, true if the type or size is invalid
     */
     bool write_bjdata_ndarray(const typename BasicJsonType::object_t& value, const bool use_count, const bool use_type)
@@ -16929,7 +16929,7 @@ NLOHMANN_JSON_NAMESPACE_BEGIN
 namespace detail
 {
 
-/*!
+/**
 @brief implements the Grisu2 algorithm for binary to decimal floating-point
 conversion.
 
@@ -16970,7 +16970,7 @@ struct diyfp // f * 2^e
 
     constexpr diyfp(std::uint64_t f_, int e_) noexcept : f(f_), e(e_) {}
 
-    /*!
+    /**
     @brief returns x - y
     @pre x.e == y.e and x.f >= y.f
     */
@@ -16982,7 +16982,7 @@ struct diyfp // f * 2^e
         return {x.f - y.f, x.e};
     }
 
-    /*!
+    /**
     @brief returns x * y
     @note The result is rounded. (Only the upper q bits are returned.)
     */
@@ -17047,7 +17047,7 @@ struct diyfp // f * 2^e
         return {h, x.e + y.e + 64};
     }
 
-    /*!
+    /**
     @brief normalize x such that the significand is >= 2^(q-1)
     @pre x.f != 0
     */
@@ -17064,7 +17064,7 @@ struct diyfp // f * 2^e
         return x;
     }
 
-    /*!
+    /**
     @brief normalize x such that the result has the exponent E
     @pre e >= x.e and the upper e - x.e bits of x.f must be zero.
     */
@@ -17086,7 +17086,7 @@ struct boundaries
     diyfp plus;
 };
 
-/*!
+/**
 Compute the (normalized) diyfp representing the input number 'value' and its
 boundaries.
 
@@ -17225,7 +17225,7 @@ struct cached_power // c = f * 2^e ~= 10^k
     int k;
 };
 
-/*!
+/**
 For a normalized diyfp w = f * 2^e, this function returns a (normalized) cached
 power-of-ten c = f_c * 2^e_c, such that the exponent of the product w * c
 satisfies (Definition 3.2 from [1])
@@ -17392,7 +17392,7 @@ inline cached_power get_cached_power_for_binary_exponent(int e)
     return cached;
 }
 
-/*!
+/**
 For n != 0, returns k, such that pow10 := 10^(k-1) <= n < 10^k.
 For n == 0, returns 1 and sets pow10 := 1.
 */
@@ -17487,7 +17487,7 @@ inline void grisu2_round(char* buf, int len, std::uint64_t dist, std::uint64_t d
     }
 }
 
-/*!
+/**
 Generates V = buffer * 10^decimal_exponent, such that M- <= V <= M+.
 M- and M+ must be normalized and share the same exponent -60 <= e <= -32.
 */
@@ -17726,7 +17726,7 @@ inline void grisu2_digit_gen(char* buffer, int& length, int& decimal_exponent,
     //      N = 9  for p = 24 (IEEE single precision)
 }
 
-/*!
+/**
 v = buf * 10^decimal_exponent
 len is the length of the buffer (number of decimal digits)
 The buffer must be large enough, i.e. >= max_digits10.
@@ -17785,7 +17785,7 @@ inline void grisu2(char* buf, int& len, int& decimal_exponent,
     grisu2_digit_gen(buf, len, decimal_exponent, M_minus, w, M_plus);
 }
 
-/*!
+/**
 v = buf * 10^decimal_exponent
 len is the length of the buffer (number of decimal digits)
 The buffer must be large enough, i.e. >= max_digits10.
@@ -17825,7 +17825,7 @@ void grisu2(char* buf, int& len, int& decimal_exponent, FloatType value)
     grisu2(buf, len, decimal_exponent, w.minus, w.w, w.plus);
 }
 
-/*!
+/**
 @brief appends a decimal representation of e to buf
 @return a pointer to the element following the exponent.
 @pre -1000 < e < 1000
@@ -17873,7 +17873,7 @@ inline char* append_exponent(char* buf, int e)
     return buf;
 }
 
-/*!
+/**
 @brief prettify v = buf * 10^decimal_exponent
 
 If v is in the range [10^min_exp, 10^max_exp) it will be printed in fixed-point
@@ -17956,7 +17956,7 @@ inline char* format_buffer(char* buf, int len, int decimal_exponent,
 
 }  // namespace dtoa_impl
 
-/*!
+/**
 @brief generates a decimal representation of the floating-point number value in [first, last).
 
 The format of the resulting decimal representation is similar to printf's %g
@@ -18067,7 +18067,7 @@ class serializer
     static constexpr std::uint8_t UTF8_REJECT = 1;
 
   public:
-    /*!
+    /**
     @param[in] s  output stream to serialize to
     @param[in] ichar  indentation character to use
     @param[in] error_handler_  how to react on decoding errors
@@ -18090,7 +18090,7 @@ class serializer
     serializer& operator=(serializer&&) = delete;
     ~serializer() = default;
 
-    /*!
+    /**
     @brief internal implementation of the serialization function
 
     This function is called by the public member function dump and organizes
@@ -18382,7 +18382,7 @@ class serializer
     }
 
   JSON_PRIVATE_UNLESS_TESTED:
-    /*!
+    /**
     @brief dump escaped string
 
     Escape a string by replacing certain special characters by a sequence of an
@@ -18643,7 +18643,7 @@ class serializer
     }
 
   private:
-    /*!
+    /**
     @brief count digits
 
     Count the number of decimal (base 10) digits for an input unsigned integer.
@@ -18677,7 +18677,7 @@ class serializer
         }
     }
 
-    /*!
+    /**
      * @brief convert a byte to a uppercase hex representation
      * @param[in] byte byte to represent
      * @return representation ("00".."FF")
@@ -18704,7 +18704,7 @@ class serializer
         return false;
     }
 
-    /*!
+    /**
     @brief dump an integer
 
     Dump a given integer to output stream @a o. Works internally with
@@ -18796,7 +18796,7 @@ class serializer
         o->write_characters(number_buffer.data(), n_chars);
     }
 
-    /*!
+    /**
     @brief dump a floating-point number
 
     Dump a given floating-point number to output stream @a o. Works internally
@@ -18884,7 +18884,7 @@ class serializer
         }
     }
 
-    /*!
+    /**
     @brief check whether a string is UTF-8 encoded
 
     The function checks each byte of a string whether it is UTF-8 encoded. The
@@ -19370,14 +19370,14 @@ NLOHMANN_JSON_NAMESPACE_END
     #include <string_view>
 #endif
 
-/*!
+/**
 @brief namespace for Niels Lohmann
 @see https://github.com/nlohmann
 @since version 1.0.0
 */
 NLOHMANN_JSON_NAMESPACE_BEGIN
 
-/*!
+/**
 @brief a class to store JSON values
 
 @internal
@@ -19697,7 +19697,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     ////////////////////////
 
   JSON_PRIVATE_UNLESS_TESTED:
-    /*!
+    /**
     @brief a JSON value
 
     The actual storage for a JSON value of the @ref basic_json class. This
@@ -19963,7 +19963,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     };
 
   private:
-    /*!
+    /**
     @brief checks the class invariants
 
     This function asserts the class invariants. It needs to be called at the
@@ -20810,7 +20810,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return is_binary() ? m_data.m_value.binary : nullptr;
     }
 
-    /*!
+    /**
     @brief helper function to implement get_ref()
 
     This function helps to implement get_ref() without code duplication for
@@ -20862,7 +20862,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     }
 
   private:
-    /*!
+    /**
     @brief get a value (explicit)
 
     Explicit type conversion between the JSON value and a compatible value
@@ -20913,7 +20913,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return ret;
     }
 
-    /*!
+    /**
     @brief get a value (explicit); special case
 
     Explicit type conversion between the JSON value and a compatible value
@@ -20953,7 +20953,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return JSONSerializer<ValueType>::from_json(*this);
     }
 
-    /*!
+    /**
     @brief get special-case overload
 
     This overloads converts the current @ref basic_json in a different
@@ -20977,7 +20977,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return *this;
     }
 
-    /*!
+    /**
     @brief get special-case overload
 
     This overloads avoids a lot of template boilerplate, it can be seen as the
@@ -21000,7 +21000,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return *this;
     }
 
-    /*!
+    /**
     @brief get a pointer value (explicit)
     @copydoc get()
     */
@@ -21016,7 +21016,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     }
 
   public:
-    /*!
+    /**
     @brief get a (pointer) value (explicit)
 
     Performs explicit type conversion between the JSON value and a compatible value if required.
@@ -21055,7 +21055,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return get_impl<ValueType>(detail::priority_tag<4> {});
     }
 
-    /*!
+    /**
     @brief get a pointer value (explicit)
 
     Explicit pointer access to the internally stored JSON value. No copies are
@@ -21150,7 +21150,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         return get_ref_impl<ReferenceType>(*this);
     }
 
-    /*!
+    /**
     @brief get a value (implicit)
 
     Implicit type conversion between the JSON value and a compatible value.
@@ -24513,7 +24513,7 @@ struct hash<nlohmann::NLOHMANN_BASIC_JSON_TPL> // NOLINT(cert-dcl58-cpp)
 template<>
 struct less< ::nlohmann::detail::value_t> // do not remove the space after '<', see https://github.com/nlohmann/json/pull/679
 {
-    /*!
+    /**
     @brief compare two value_t enum values
     @since version 3.0.0
     */

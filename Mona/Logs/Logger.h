@@ -22,7 +22,6 @@ details (or else see http://mozilla.org/MPL/2.0/).
 namespace Mona {
 
 typedef uint8_t LOG_LEVEL;
-
 enum : uint8_t {
 	LOG_FATAL = 1,
 	LOG_CRITIC = 2,

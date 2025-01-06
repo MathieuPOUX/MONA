@@ -22,79 +22,88 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-	struct Ex : String, virtual Object {
-		NULLABLE(empty())
-		struct Application;
-		struct Extern;
-		struct Format;
-		struct IO;
-		struct Intern;
-		struct Net;
-		struct Permission;
-		struct Protocol;
-		struct System;
-		struct Unavailable;
-		struct Unfound;
-		struct Unsupported;
+/**
+ * @ingroup Util
+ */
+struct Ex : String, virtual Object {
+	NULLABLE(empty())
+	struct Application;
+	struct Extern;
+	struct Format;
+	struct IO;
+	struct Intern;
+	struct Net;
+	struct Permission;
+	struct Protocol;
+	struct System;
+	struct Unavailable;
+	struct Unfound;
+	struct Unsupported;
+};
+/**
+Application exception, error from user side */
+struct Ex::Application						: Ex { struct Argument; struct Config; struct Error; struct Invalid; };
+	struct Ex::Application::Argument			: Application {}; // Application argument given error
+	struct Ex::Application::Config				: Application {}; // Application configuration error
+	struct Ex::Application::Error				: Application {}; // error during application execution
+	struct Ex::Application::Invalid				: Application {}; // Invalid
+/**
+Extern exception, error from library dependency or from outside code like STD */
+struct Ex::Extern							: Ex { struct Crypto; struct Math; struct Net; };
+	struct Ex::Extern::Crypto					: Extern {};
+	struct Ex::Extern::Math						: Extern {};
+/**
+Formatting exception */
+struct Ex::Format							: Ex { struct Incompatible; struct Invalid; struct Unsupported; };
+	struct Ex::Format::Incompatible			: Format {};
+	struct Ex::Format::Invalid				: Format {};
+	struct Ex::Format::Unsupported			: Format {};
+/**
+Access IO exception */
+struct Ex::IO								: Ex { struct Input; struct Output; };
+	struct Ex::IO::Input : IO {};
+	struct Ex::IO::Output : IO{};
+/**
+Intern exception, code/coder error */
+struct Ex::Intern							: Ex {};
+/**
+Net exception */
+struct Ex::Net								: Ex { struct Address; struct Socket; struct System; };
+	struct Ex::Net::Address						: Net { struct Ip; struct Port; };
+		struct Ex::Net::Address::Ip					: Address {};
+		struct Ex::Net::Address::Port				: Address {};
+	struct Ex::Net::Socket						: Net {
+		int code = 0;
 	};
-	/*!
-	Application exception, error from user side */
-	struct Ex::Application						: Ex { struct Argument; struct Config; struct Error; struct Invalid; };
-		struct Ex::Application::Argument			: Application {}; // Application argument given error
-		struct Ex::Application::Config				: Application {}; // Application configuration error
-		struct Ex::Application::Error				: Application {}; // error during application execution
-		struct Ex::Application::Invalid				: Application {}; // Invalid
-	/*!
-	Extern exception, error from library dependency or from outside code like STD */
-	struct Ex::Extern							: Ex { struct Crypto; struct Math; struct Net; };
-		struct Ex::Extern::Crypto					: Extern {};
-		struct Ex::Extern::Math						: Extern {};
-	/*!
-	Formatting exception */
-	struct Ex::Format							: Ex {};
-	/*!
-	Access IO exception */
-	struct Ex::IO								: Ex { struct Input; struct Output; };
-		struct Ex::IO::Input : IO {};
-		struct Ex::IO::Output : IO{};
-	/*!
-	Intern exception, code/coder error */
-	struct Ex::Intern							: Ex {};
-	/*!
-	Net exception */
-	struct Ex::Net								: Ex { struct Address; struct Socket; struct System; };
-		struct Ex::Net::Address						: Net { struct Ip; struct Port; };
-			struct Ex::Net::Address::Ip					: Address {};
-			struct Ex::Net::Address::Port				: Address {};
-		struct Ex::Net::Socket						: Net {
-			int code = 0;
-		};
-		struct Ex::Net::System						: Net {};
-	/*!
-	Access permission exception */
-	struct Ex::Permission						: Ex {};
-	/*!
-	Exchange protocol exception */
-	struct Ex::Protocol							: Ex {};
-	/*!
-	System host exception */
-	struct Ex::System							: Ex { struct File; struct Memory; struct Registry; struct Service; struct Thread; };
-		struct Ex::System::File						: System {};
-		struct Ex::System::Memory					: System {};
-		struct Ex::System::Registry					: System {};
-		struct Ex::System::Service					: System {};
-		struct Ex::System::Thread					: System {};
-	/*!
-	Ressource Unfound */
-	struct Ex::Unfound : Ex {};
-	/*!
-	Unavailable feature */
-	struct Ex::Unavailable : Ex {};
-	/*!
-	Unsupported feature */
-	struct Ex::Unsupported : Ex {};
+	struct Ex::Net::System						: Net {};
+/**
+Access permission exception */
+struct Ex::Permission						: Ex {};
+/**
+Exchange protocol exception */
+struct Ex::Protocol							: Ex {};
+/**
+System host exception */
+struct Ex::System							: Ex { struct File; struct Memory; struct Registry; struct Service; struct Thread; };
+	struct Ex::System::File						: System {};
+	struct Ex::System::Memory					: System {};
+	struct Ex::System::Registry					: System {};
+	struct Ex::System::Service					: System {};
+	struct Ex::System::Thread					: System {};
+/**
+Ressource Unfound */
+struct Ex::Unfound : Ex {};
+/**
+Unavailable feature */
+struct Ex::Unavailable : Ex {};
+/**
+Unsupported feature */
+struct Ex::Unsupported : Ex {};
 
 
+/**
+ * @ingroup Util
+ */
 struct Exception : virtual Object {
 	NULLABLE(!_pEx)
 	CONST_STRING(toString());
@@ -105,22 +114,23 @@ struct Exception : virtual Object {
 
 	Exception& operator=(const Exception& other) {
 		_pEx = other._pEx;
-		return *this;
+		return self;
 	}
 	Exception& operator=(Exception&& other) {
 		_pEx = std::move(other._pEx);
-		return *this;
+		return self;
 	}
 	Exception& operator=(std::nullptr_t) { return reset(); }
 
 	template<typename ExType, typename ...Args>
 	ExType& set(Args&&... args) {
 		ExType& ex = _pEx.set<ExType>();
-		if (String::Assign<std::string>(ex, std::forward<Args>(args)...).empty())
-			String::Assign(ex, typeOf<ExType>()," exception");
+		if (String::assign<std::string>(ex, std::forward<Args>(args)...).empty()) {
+            String::assign(ex, typeOf<ExType>(), " exception");
+        }
 		return ex;
 	}
-	Exception& reset() { _pEx.reset();  return *this; }
+	Exception& reset() { _pEx.reset();  return self; }
 
 	template<typename ExType>
 	const ExType& cast() const { return dynamic_cast<ExType*>(_pEx.get()) ? (ExType&)*_pEx : failCast<ExType>(); }

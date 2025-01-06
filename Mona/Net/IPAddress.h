@@ -22,7 +22,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 #include "Mona/Mona.h"
 #include "Mona/Net/Net.h"
-#include "Mona/Format/BinaryReader.h"
+#include "Mona/Memory/BinaryReader.h"
 
 //
 // Automatically link Base library.
@@ -34,7 +34,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 This class represents an internet (IP) host
 address. The address can belong either to the
 IPv4 or the IPv6 address family.
@@ -186,7 +186,7 @@ struct IPAddress : virtual Object {
 
 	static bool Resolve(Exception& ex, const char* address, IPAddress& host);
 
-	/*!
+	/**
 	Returns a list for all local IP addresses
 	/!\ expensive cost and time method */
 	static bool GetLocals(Exception& ex, std::vector<IPAddress>& locals);

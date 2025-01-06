@@ -104,7 +104,7 @@ void Logs::Loggers::flush() {
 		const char* fatal = logger.fatal;
 		if (fatal) {
 			if (*fatal)
-				String::Append(message, ", ", fatal);
+				String::append(message, ", ", fatal);
 		}
 		_failed.pop_back();
 		erase(logger.name); // erase here to remove it from _Loggers before dispatching loop

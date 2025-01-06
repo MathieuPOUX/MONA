@@ -17,6 +17,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #include "Mona/Mona.h"
 #include "Mona/Format/String.h"
 #include <mutex>
+#include <map>
 #if !defined(_WIN32)
 #include <cxxabi.h>
 #include <signal.h>

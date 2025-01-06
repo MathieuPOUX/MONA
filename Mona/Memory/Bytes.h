@@ -20,6 +20,10 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
+/**
+ * @ingroup Memory
+ * @brief Manipulate Bytes
+ */
 struct Bytes : virtual Object {
 	bool				empty() const { return !size(); }
 
@@ -27,14 +31,14 @@ struct Bytes : virtual Object {
 	virtual uint32_t		size() const = 0;
 	const char*			end() const { return data() + size(); }
 
-	/*!
+	/**
 	Return value at index i in a uint8_t bitwise friendly format (and convertible to char without warning) */
 	uint8_t				operator[](uint32_t i) const {
 		DEBUG_ASSERT(data() && i<size())
 			return data()[i];
 	}
 
-	/*!
+	/**
 	Force a string conversion in building a std::string with this value in argument, keep if explicit to prefer data()/size() access less expensive */
 	explicit operator std::string() const { return std::string(data(), size()); }
 

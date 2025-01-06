@@ -22,7 +22,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 Tool to compute queue congestion */
 struct Congestion : virtual Object {
 	NULLABLE(!self(Net::RTO_INIT))

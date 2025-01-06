@@ -20,11 +20,12 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #include "Mona/Disk/Path.h"
 #include "Mona/Util/Event.h"
 #include "Mona/Disk/FileSystem.h"
+#include <map>
 
 
 namespace Mona {
 
-/*!
+/**
 Wath update files
 If path is a file or folder in MODE_LOW, it's watching simply this fileor folder.
 If path is a file or folder in MODE_HEAVY, it's watching file and folder with this name in all directory and sub directory
@@ -41,7 +42,7 @@ struct FileWatcher : virtual Object {
 	const FileSystem::Mode	mode;
 	const Path				path;
 
-	/*!
+	/**
 	Check file updates in path, path  */
 	int		watch(Exception& ex, const OnUpdate& onUpdate);
 

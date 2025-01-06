@@ -29,7 +29,7 @@ struct Timer : virtual Object {
 	Timer() : _count(0) {}
 	~Timer();
 
-/*!
+/**
 	OnTimer is a function which returns the timeout in ms of next call, or 0 to stop the timer.
 	"count" parameter informs on the number of raised time */
 	struct OnTimer : std::function<uint32_t(uint32_t delay)>, virtual Object {
@@ -50,7 +50,7 @@ struct Timer : virtual Object {
 			return *this;
 		}
 
-		/*!
+		/**
 		Call the timer, also allow to call the timer on set => timer.set(onTimer, onTimer()); */
 		uint32_t operator()(uint32_t delay = 0) const { ++(uint32_t&)count; return std::function<uint32_t(uint32_t)>::operator()(delay); }
 
@@ -63,12 +63,12 @@ struct Timer : virtual Object {
 
 	uint32_t count() const { return _count; }
 
-/*!
+/**
 	Set timer, timeout is the first raising timeout
 	If timeout is 0 it removes the timer! */
 	const Timer::OnTimer& set(const Timer::OnTimer& onTimer, uint32_t timeout) const;
 
-/*!
+/**
 	Return the time in ms to wait before to call one time again raise method (>0), or 0 if there is no more timer! */
 	uint32_t raise();
 

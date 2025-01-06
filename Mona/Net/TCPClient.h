@@ -30,7 +30,7 @@ struct TCPClient : private StreamData<>, virtual Object {
 	typedef Event<void(const SocketAddress& address)>	ON(Disconnection);
 	typedef Socket::OnError								ON(Error);
 
-/*!
+/**
 	Create a new TCPClient */
 	TCPClient(IOSocket& io, const Shared<TLS>& pTLS=nullptr);
 	virtual ~TCPClient() { disconnect(); }
@@ -55,7 +55,7 @@ struct TCPClient : private StreamData<>, virtual Object {
 	void		send(const Shared<RunnerType>& pRunner) { io.threadPool.queue(_sendingTrack, pRunner); }
 	template <typename RunnerType, typename ...Args>
 	void		send(Args&&... args) { io.threadPool.queue<RunnerType>(_sendingTrack, std::forward<Args>(args)...); }
-	/*!
+	/**
 	Runner example to send data with custom process in parallel thread */
 	struct Sender : Runner {
 		Sender(const Shared<Socket>& pSocket, const Packet& packet, int flags = 0) :

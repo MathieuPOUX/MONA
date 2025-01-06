@@ -30,7 +30,7 @@ FileLogger::FileLogger(string&& dir, uint32_t sizeByFile, uint16_t rotation) : _
 bool FileLogger::log(LOG_LEVEL level, const Path& file, long line, const string& message) {
 	static string Buffer; // max size controlled by Logs system!
 	static Exception Ex;
-	String::Assign(Buffer, String::Log(Logs::LevelToString(level), file, line, message, Thread::CurrentId()));
+	Logs::Format(level, file, line, message, Thread::CurrentId()).to(Buffer);
 	if (!_pFile->write(Ex, Buffer.data(), Buffer.size())) {
 		_pFile.reset();
 		return false;
@@ -40,7 +40,7 @@ bool FileLogger::log(LOG_LEVEL level, const Path& file, long line, const string&
 }
 
 bool FileLogger::dump(const string& header, const char* data, uint32_t size) {
-	String buffer(String::Date("%d/%m %H:%M:%S.%c  "), header, '\n');
+	String buffer(Date::Format(Date(), "%d/%m %H:%M:%S.%c  "), header, '\n');
 	Exception ex;
 	if (!_pFile->write(ex, buffer.data(), buffer.size()) || !_pFile->write(ex, data, size)) {
 		_pFile.reset();
@@ -63,7 +63,7 @@ void FileLogger::manage(uint32_t written) {
 	Exception ex;
 	FileSystem::ForEach forEach([this, &ex, &name, &maxNum](const string& path, uint16_t level) {
 		uint16_t num;
-		if (!String::tryNumber(FileSystem::GetBaseName(path, name), num))
+		if (!String::tryNumber(num, FileSystem::GetBaseName(path, name)))
 			return true;
 		if (_rotation && num >= (_rotation - 1))
 			FileSystem::Delete(ex, String(_pFile->parent(), num, ".log"));

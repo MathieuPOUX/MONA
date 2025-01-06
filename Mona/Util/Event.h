@@ -11,7 +11,6 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 Mozilla Public License v. 2.0 received along this program for more
 details (or else see http://mozilla.org/MPL/2.0/).
-
 */
 
 #pragma once
@@ -26,7 +25,8 @@ namespace Mona {
 #define ON(NAME)  On##NAME; On##NAME on##NAME
 
 template<typename Result, typename... Args> struct Event;
-/*!
+/**
+ * @ingroup Util
 Fast mechanism event
 onEvent1 = onEvent2 = []() { ... code ...} => onEvent1() { onEvent2() { []() { ... code ...} } }; 
 onEvent3 = onEvent2 => OK, onEvent3() { onEvent2() { []() { ... code ...} } }; 
@@ -50,15 +50,15 @@ struct Event<Result(Args ...)> : virtual Object {
 	Event() : _pFunction(SET) {}
 	Event(const Event& event) : _pFunction(SET) { operator=(event); }
 	Event(const Event&& event) : _pFunction(event._pFunction) {}
-	/*!
+	/**
 	Build an event subscriber from lambda function */
 	explicit Event(std::function<Result(Args...)>&& function) : _pFunction(SET, std::move(function)) {}
 
-	/*!
+	/**
 	Raise the event */
 	Result operator()(Args... args) const { return _pFunction && *_pFunction ? (*_pFunction)(std::forward<Args>(args)...) : Result();}
 
-	/*!
+	/**
 	Assign lambda function */
 	Event& operator=(std::function<Result(Args...)>&& function) {
 		if (!_pFunction)
@@ -68,7 +68,7 @@ struct Event<Result(Args ...)> : virtual Object {
 		*_pFunction = std::move(function);
 		return *this;
 	}
-	/*!
+	/**
 	Subscribe to event */
 	Event& operator=(const Event& event) {
 		if (!_pFunction)
@@ -89,7 +89,7 @@ struct Event<Result(Args ...)> : virtual Object {
 		_pFunction = event._pFunction;
 		return *this;
 	}
-	/*!
+	/**
 	Unsubscribe to event or erase function */
 	Event& operator=(std::nullptr_t) {
 		if(_pFunction)

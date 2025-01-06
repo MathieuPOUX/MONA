@@ -15,7 +15,8 @@ details (or else see http://mozilla.org/MPL/2.0/).
 */
 
 
-#include "Mona/Format/URL.h"
+#include "Mona/Util/URL.h"
+#include "Mona/Format/URI.h"
 
 
 using namespace std;
@@ -160,7 +161,7 @@ const char* URL::ParseRequest(const char* request, size_t& size, string& path, R
 			else if (decoding && ++decoding > 2) {
 				char hi = path.back();
 				path.resize(path.size() - 2); // remove %+hi
-				String::FromURI(hi, *request, path);
+				URI::parse(hi, *request, path);
 				decoding = 0;
 				break; // skip this value to decoded string!
 			}

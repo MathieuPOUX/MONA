@@ -25,7 +25,7 @@ namespace Mona {
 
 #define BUFFER_RESET(BUFFER,SIZE) (BUFFER ? BUFFER->resize(SIZE, false) : BUFFER.set(SIZE))
 
-/*!
+/**
 Buffer dynamic with clear/resize/data/size method (like std) */
 struct Buffer : Bytes, virtual Object {
 	NULLABLE(!_data);

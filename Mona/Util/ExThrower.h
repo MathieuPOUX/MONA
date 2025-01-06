@@ -22,6 +22,9 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
+/**
+ * @ingroup Util
+ */
 #define THROW(LEVEL, EX_TYPE, ...) { if(onException) { static thread_local Exception Ex; Ex.set<EX_TYPE>(__VA_ARGS__); onException(LEVEL, Ex); } else LOG(LEVEL, __VA_ARGS__); }
 #define THROW_EX(LEVEL, EX) { if(onException) onException(LEVEL, EX); else LOG(LEVEL, EX); }
 #define THROW_AUTO(FUNCTION) { if((FUNCTION)) { if(ex)  THROW_EX(WARN, ex); } else { THROW_EX(ERROR, ex); } }

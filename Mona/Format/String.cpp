@@ -141,16 +141,16 @@ string& String::replace(string& str, const string& what, const string& with) {
 }
 
 template<typename Type, uint8_t base>
-bool String::tryNumber(const char* value, size_t size, Type& result)  {
+bool String::tryNumber(Type& result, const char* value, size_t size)  {
 	Exception ex;
-	return tryNumber<Type, base>(ex, value, size, result);
+	return tryNumber<Type, base>(ex, result, value, size);
 }
 
 template<typename Type, uint8_t base>
-bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& result) {
+bool String::tryNumber(Exception& ex, Type& result, const char* value, size_t size) {
 	STATIC_ASSERT(is_arithmetic<Type>::value);
 	if (base > 36) {
-		ex.set<Ex::Format>(base, " is impossible to represent with ascii table, maximum base is 36");
+		ex.set<Ex::Format::Invalid>(base, " is impossible to represent with ascii table, maximum base is 36");
 		return false;
 	}
 	bool beginning = true;
@@ -164,7 +164,7 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
 		if (iscntrl(*current) || *current==' ') {
 			if (!beginning) {
 				// accept a partial conversion!
-				ex.set<Ex::Format>(value, " is a partial number");
+				ex.set<Ex::Format::Invalid>(value, " is a partial number");
 				break;
 			}
 			// trim beginning
@@ -181,7 +181,7 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
 				case '+':
 					if (!beginning) {
 						// accept a partial conversion!
-						ex.set<Ex::Format>(value, " is a partial number");
+						ex.set<Ex::Format::Invalid>(value, " is a partial number");
 						break;
 					}
 					continue;
@@ -189,7 +189,12 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
 				case ',':
 					if (beginning || comma) {
 						// accept a partial conversion!
-						ex.set<Ex::Format>(value, " is a partial number");
+						ex.set<Ex::Format::Invalid>(value, " is a partial number");
+						break;
+					}
+					if (!std::is_floating_point<Type>::value) {
+						// accept a partial conversion!
+						ex.set<Ex::Format::Incompatible>(value, " is a floating number");
 						break;
 					}
 					comma = 1;
@@ -198,7 +203,7 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
 				// stop conversion!
 			}
 			// stop but accept a partial conversion!
-			ex.set<Ex::Format>(value, " is a partial number");
+			ex.set<Ex::Format::Invalid>(value, " is a partial number");
 			break; 
 		}
 
@@ -212,7 +217,7 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
       }
       if (value>=base) {
 		// stop but accept a partial conversion!
-		ex.set<Ex::Format>(value, " is a partial number");
+		ex.set<Ex::Format::Invalid>(value, " is a partial number");
         break;
 	  }
    
@@ -226,7 +231,7 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
     }
 
 	if (beginning) {
-		ex.set<Ex::Format>("Empty string is not a number");
+		ex.set<Ex::Format::Invalid>("Empty string is not a number");
 		return false;
 	}
 
@@ -236,12 +241,14 @@ bool String::tryNumber(Exception& ex, const char* value, size_t size, Type& resu
 
 	if ((number - negative) > numeric_limits<Type>::max()) {
       // exceeds, choose to round to the max! is more accurate with an input-user parsing
+	  ex.set<Ex::Format::Incompatible>(value, " exceeds a ", typeOf<Type>());
       number = numeric_limits<Type>::max() + negative;
     }
 
 	if (negative) {
       if(is_unsigned<Type>::value) {
         // exceeds, choose to round to the min! is more accurate with an input-user parsing
+		ex.set<Ex::Format::Incompatible>(value, " cannot be fully represented with a ", typeOf<Type>());
         number = 0;
       } else {
         number *= -1;
@@ -282,21 +289,6 @@ void String::ToUTF8(const char* value, size_t size, const String::OnEncoded& onE
 		onEncoded(begin, value - begin);
 }
 
-const char* String::ShortPath(const string& path) {
-	const char* cur(path.c_str() + path.size());
-	const char* name = NULL;
-	while (cur-- > path.c_str()) {
-		if (*cur == '/' || *cur == '\\') {
-			if (name) // end!
-				break;
-			name = cur;
-		}
-	}
-	++cur;
-	if (name && (IEqual(cur, name - cur, "sources") || IEqual(cur, name - cur, "mona")))
-		return name + 1;
-	return cur;
-}
 
 bool String::ToUTF8(char value, char (&buffer)[2]) {
 	if (value >=0)
@@ -306,31 +298,33 @@ bool String::ToUTF8(char value, char (&buffer)[2]) {
 	return false;
 }
 
-template bool  String::tryNumber(const char*, size_t, bool&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, bool&);
-template bool  String::tryNumber(const char*, size_t, float&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, float&);
-template bool  String::tryNumber(const char*, size_t, double&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, double&);
-template bool  String::tryNumber(const char*, size_t, unsigned char&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, unsigned char&);
-template bool  String::tryNumber(const char*, size_t, char&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, char&);
-template bool  String::tryNumber(const char*, size_t, short&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, short&);
-template bool  String::tryNumber(const char*, size_t, unsigned short&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, unsigned short&);
-template bool  String::tryNumber(const char*, size_t, int&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, int&);
-template bool  String::tryNumber(const char*, size_t, unsigned int&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, unsigned int&);
-template bool  String::tryNumber(const char*, size_t, long&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, long&);
-template bool  String::tryNumber(const char*, size_t, unsigned long&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, unsigned long&);
-template bool  String::tryNumber(const char*, size_t, long long&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, long long&);
-template bool  String::tryNumber(const char*, size_t, unsigned long long&);
-template bool  String::tryNumber(Exception& ex, const char*, size_t, unsigned long long&);
+template bool  String::tryNumber(bool&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, bool&, const char*, size_t);
+template bool  String::tryNumber(float&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, float&, const char*, size_t);
+template bool  String::tryNumber(double&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, double&, const char*, size_t);
+template bool  String::tryNumber(unsigned char&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, unsigned char&, const char*, size_t);
+template bool  String::tryNumber(char&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, char&, const char*, size_t);
+template bool  String::tryNumber(short&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, short&, const char*, size_t);
+template bool  String::tryNumber(unsigned short&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, unsigned short&, const char*, size_t);
+template bool  String::tryNumber(int&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, int&, const char*, size_t);
+template bool  String::tryNumber(unsigned int&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, unsigned int&, const char*, size_t);
+template bool  String::tryNumber(long&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, long&, const char*, size_t);
+template bool  String::tryNumber(unsigned long&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, unsigned long&, const char*, size_t);
+template bool  String::tryNumber(long long&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, long long&, const char*, size_t);
+template bool  String::tryNumber(unsigned long long&, const char*, size_t);
+template bool  String::tryNumber(Exception& ex, unsigned long long&, const char*, size_t);
+
+
 
 } // namespace Mona

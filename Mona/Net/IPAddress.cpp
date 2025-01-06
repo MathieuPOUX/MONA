@@ -24,6 +24,8 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #include "Mona/Memory/Bytes.h"
 #include "Mona/Format/String.h"
 #include "Mona/Net/DNS.h"
+#include "Mona/Format/Hexa.h"
+#include <mutex>
 #if defined(_WIN32)
 #include <Iphlpapi.h>
 #elif !defined(__ANDROID__)
@@ -259,8 +261,8 @@ private:
 
 	void stringize(string& host, string& address) const {
 		const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&ipv4());
-		String::Assign(host, bytes[0], '.', bytes[1], '.', bytes[2], '.', bytes[3]);
-		String::Assign(address, host, ":", port());
+		String::assign(host, bytes[0], '.', bytes[1], '.', bytes[2], '.', bytes[3]);
+		String::assign(address, host, ":", port());
 	}
 
 };
@@ -390,7 +392,7 @@ private:
 		const uint16_t* words = reinterpret_cast<const uint16_t*>(&ipv6());
 		if ((isIPv4Compatible() && !isWildcard() && !isLoopback()) || isIPv4Mapped()) {
 			const uint8_t* bytes = reinterpret_cast<const uint8_t*>(words);
-			String::Assign(host, words[5] == 0 ? "::" : "::FFFF:", bytes[12], '.', bytes[13], '.', bytes[14], '.', bytes[15]);
+			String::assign(host, words[5] == 0 ? "::" : "::FFFF:", bytes[12], '.', bytes[13], '.', bytes[14], '.', bytes[15]);
 		} else {
 			bool zeroSequence = false;
 			int i = 0;
@@ -405,26 +407,28 @@ private:
 						zeroSequence = true;
 					}
 				}
-				if (i > 0)
+				if (i > 0) {
 					host.append(":");
-				if (i < 8)
-					String::Append(host, String::Hex(STR &words[i++], 2, HEX_TRIM_LEFT));
+				}
+				if (i < 8) {
+					Hexa(Packet(STR & words[i++], 2), HEXA_TRIM_LEFT).to(host);
+				}
 			}
 			uint32_t scope(this->scope());
 			if (scope) {
 				host.append("%");
 #if defined(_WIN32)
-				String::Append(host, scope);
+				String::append(host, scope);
 #else
 				char buffer[IFNAMSIZ];
 				if (if_indextoname(scope, buffer))
 					host.append(buffer);
 				else
-					String::Append(host, scope);
+					String::append(host, scope);
 #endif
 			}
 		}
-		String::Assign(address, '[', host, ']', ':', port());
+		String::assign(address, '[', host, ']', ':', port());
 	}
 
 

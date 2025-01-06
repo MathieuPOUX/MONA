@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.11)
 project(MonaCPP LANGUAGES CXX)
 
 # Compiler
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (CMAKE_COMPILER_IS_GNUCXX)
     add_compile_options(-Wall -Wno-reorder -Wno-terminate -Wunknown-pragmas)
@@ -60,6 +60,17 @@ install(FILES
     DESTINATION lib/cmake/MonaCPP)
 
 
+# Doc
+find_package(Doxygen REQUIRED)
+set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
+set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+add_custom_target(doc
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM
+)
 
 ########################################
 # Tests                                #
@@ -76,4 +87,7 @@ createTest(tests/TestValue.cpp)
 add_test(NAME ${Name} COMMAND ${Test})
 
 createTest(tests/TestInsertionMap.cpp)
+add_test(NAME ${Name} COMMAND ${Test})
+
+createTest(tests/TestString.cpp)
 add_test(NAME ${Name} COMMAND ${Test})

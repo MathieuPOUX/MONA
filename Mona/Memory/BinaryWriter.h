@@ -48,7 +48,7 @@ struct BinaryWriter : Bytes, virtual Object {
 	BinaryWriter& writeFloat(float value);
 	BinaryWriter& writeBool(bool value) { return write8(value ? 1 : 0); }
 	
-	/*!
+	/**
 	Write a 7Bit value, supports signed value in adding a first sign low bit*/
 	template<typename ValueType>
 	BinaryWriter& write7Bit(typename std::make_unsigned<ValueType>::type value);

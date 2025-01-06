@@ -20,14 +20,43 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #include "Mona/Logs/ConsoleLogger.h"
 #include "Mona/Format/String.h"
 #include "Mona/Threading/Thread.h"
+#include "Mona/Timing/Date.h"
 #include <atomic>
+#include <map>
 
 namespace Mona {
 
-/*!
+/**
 Mona Logs API, contains statis methods to manage logs */
 struct Logs : virtual Static {
-	/*!
+
+	struct Format : Mona::Format<Format> {
+		Format(LOG_LEVEL level, const std::string& file, long line, const std::string& message, uint32_t threadId = 0) :
+			threadId(threadId), level(level), file(file), line(line), message(message) {
+		}
+		LOG_LEVEL			level;
+		const std::string&	file;
+		const long			line;
+		const std::string&	message;
+		const uint32_t		threadId;
+
+		template<typename OutType>
+		void stringify(OutType& out) const {
+			uint32_t size = Date::Format(Date(), "%d/%m %H:%M:%S.%c  ").to(out).size();
+			out.append(7 - (String::append<OutType>(out, LevelToString(level)).size() - size), ' ');
+			if (threadId) {
+				String::append<OutType>(out, threadId);
+				size += 5; // tab to 60 (data including), otherwise 55!
+			}
+			size = String::append<OutType>(out, ' ', Path::Short(file), '[', line, "] ").size() - size;
+			if (size < 37) {
+				out.append(37 - size, ' ');
+			}
+			String::append<OutType>(out, message, '\n');
+		}
+	};
+
+	/**
 	Add a logger target, must implements Logger.h interface
 	If name have a suffix with the form ![error] then the application shutdown on failure and displays error if set */
 	template <typename LoggerType, typename ...Args>
@@ -46,14 +75,14 @@ struct Logs : virtual Static {
 			it->second->fatal = it->first.c_str() + fatalPos + 1;
 		return true;
 	}
-	/*!
+	/**
 	Remove a logger */
 	static void			RemoveLogger(const char* name) { RemoveLogger(std::string(name)); }
 	static void			RemoveLogger(const std::string& name) { std::lock_guard<std::mutex> lock(_Mutex); _Loggers.erase(name); }
-	/*!
+	/**
 	Set LOG level */
 	static void			SetLevel(LOG_LEVEL level) { _Level = level; }
-	/*!
+	/**
 	Get LOG level  */
 	static LOG_LEVEL	GetLevel() { return _Level; }
 	static const char*  LevelToString(LOG_LEVEL level) {
@@ -77,9 +106,9 @@ struct Logs : virtual Static {
 		_Logging = true;
 		std::lock_guard<std::mutex> lock(_Mutex);
 		static Path File;
-		static String Message;
+		static std::string Message;
 		File.set(file);
-		String::Assign(Message, std::forward<Args>(args)...);
+		String::assign(Message, std::forward<Args>(args)...);
 		if (level <= LOG_CRITIC)
 			_Critic.assign(Message.empty() ? "unknown" : Message.c_str());
 		for (auto& it : _Loggers) {

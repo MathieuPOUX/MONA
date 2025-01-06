@@ -67,7 +67,7 @@ void UnitTest::runSelectedModule() {
 	int index = 0;
 	string tmp;
 	for (auto itTest = Tests().begin(), end = Tests().end(); itTest != end; itTest = Tests().upper_bound(itTest->first))
-		cout << String::Assign(tmp, index++, " - ", itTest->first) << endl;
+		cout << String::assign(tmp, index++, " - ", itTest->first) << endl;
 
 	// Ask for the index
 	cout << endl << "Choose the index of the test to run (or type enter to run all) : ";
@@ -113,7 +113,7 @@ void UnitTest::runAt(const string& mod, uint32_t loop) {
 	}
 
 	uint32_t number;
-	if (String::tryNumber<uint32_t>(ex, test, number)) {
+	if (String::tryNumber<uint32_t>(ex, number, test)) {
 
 		for (auto itTest = Tests().begin(), end = Tests().end(); itTest != end; itTest = Tests().upper_bound(itTest->first)) {
 			if (!number--) { // Module at index number found

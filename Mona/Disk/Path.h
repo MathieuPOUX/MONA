@@ -22,16 +22,19 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 Powerfull feature to manipulate a path to File or Folder
 /!\ Path is a folder if ends with '/'
 /!\ No move or copy constructor because a Shared<Path> usage is a lot more faster */
 struct Path : virtual Object {
+	static const char* Short(const std::string& path) { return Short(path.data(), path.size()); }
+	static const char* Short(const char* path, size_t size = std::string::npos);
+
 	CONST_STRING(_pImpl ? _pImpl->path() : String::Empty());
 	NULLABLE(!_pImpl)
 
 	Path() {}
-	/*!
+	/**
 	Build a path */
 	template <typename ...Args>
 	Path(Args&&... args) { _pImpl.set(std::forward<Args>(args)...); }
@@ -79,7 +82,7 @@ private:
 
 		template <typename ...Args>
 		Impl(Args&&... args) : _attributesLoaded(false) {
-			String::Assign(_path, std::forward<Args>(args)...);
+			String::assign(_path, std::forward<Args>(args)...);
 			init();
 		}
 

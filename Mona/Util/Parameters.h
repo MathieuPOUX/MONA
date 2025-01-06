@@ -18,7 +18,9 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 #include "Mona/Mona.h"
 #include "Mona/Util/Event.h"
+#include "Mona/Timing/Time.h"
 #include <set>
+#include <map>
 
 
 namespace Mona {
@@ -96,21 +98,21 @@ struct Parameters : String::Object<Parameters> {
 
 	Parameters&		clear(const std::string& prefix = String::Empty());
 
-	/*!
+	/**
 	Return false if key doesn't exist (and don't change 'value'), otherwise return true and assign string 'value' */
 	bool		getString(const std::string& key, std::string& value) const;
-	/*!
+	/**
 	Return false if key doesn't exist or if it's not a numeric type, otherwise return true and assign numeric 'value' */
 	template<typename Type>
 	bool getNumber(const std::string& key, Type& value) const {
 		STATIC_ASSERT(std::is_arithmetic<Type>::value); const std::string* pValue = getParameter(key);
-		return pValue && String::tryNumber(*pValue, value);
+		return pValue && String::tryNumber(value, *pValue);
 	}
-	/*!
+	/**
 	Return false if key doesn't exist or if it's not a boolean type, otherwise return true and assign boolean 'value' */
 	bool getBoolean(const std::string& key, bool& value) const;
 
-	/*!
+	/**
 	A typed return of get */
 	template<typename NumberType, typename = typename std::enable_if<std::is_arithmetic<NumberType>::value>::type>
     NumberType get(const std::string& key, NumberType defaultValue = 0) const {
@@ -118,7 +120,7 @@ struct Parameters : String::Object<Parameters> {
 		getNumber(key, result);
 		return result;
 	}
-	/*!
+	/**
 	A short version of getString with default argument to get value by returned result */
 	std::string get(const std::string& key, const std::string& defaultValue = "") const;
 
@@ -138,7 +140,7 @@ struct Parameters : String::Object<Parameters> {
 	const std::string* getParameter(const std::string& key) const;
 	template<typename KeyType, typename ...Args>
 	const std::string& setParameter(KeyType&& key, Args&&... args) { return emplace(std::forward<KeyType>(key), std::string(std::forward<Args>(args) ...)).first->second; }
-	/*!
+	/**
 	Just to match STD container (see MapWriter) */
 	template<typename KeyType, typename ...Args>
 	std::pair<const_iterator, bool> emplace(KeyType&& key, Args&&... args) { return emplace(std::forward<KeyType>(key), std::string(std::forward<Args>(args) ...)); }

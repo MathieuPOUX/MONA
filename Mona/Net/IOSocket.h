@@ -51,7 +51,7 @@ struct IOSocket : protected Thread, virtual Object {
 	
 	virtual bool			subscribe(Exception& ex, const Shared<Socket>& pSocket);
 
-	/*!
+	/**
 	Unsubscribe pSocket and reset Shared<Socket> to avoid to resubscribe the same socket which could crash decoder assignation */
 	void					unsubscribe(Shared<Socket>& pSocket);
 

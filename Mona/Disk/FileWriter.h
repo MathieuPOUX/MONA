@@ -21,7 +21,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 Help tool to Write/Delete file in a asynchronous way (can be done also in using directly IOFile + File)
 It can be used too for an asynchronous folder deletion in using erase method */
 struct FileWriter : virtual Object {
@@ -41,7 +41,7 @@ struct FileWriter : virtual Object {
 
 	bool opened() const { return operator bool(); }
 
-	/*!
+	/**
 	Async open file to write, return *this to allow a open(path).write(...) call
 	/!\ don't open really the file, because performance are better if opened on first write operation */
 	FileWriter& open(const Path& path, bool append = false) {
@@ -50,7 +50,7 @@ struct FileWriter : virtual Object {
 		io.subscribe(_pFile, onError, onFlush);
 		return self;
 	}
-	/*!
+	/**
 	Write data, if queueing wait onFlush event for large data transfer*/
 	void		write(const Packet& packet) { DEBUG_ASSERT(_pFile);  io.write(_pFile, packet); }
 	void		erase() { DEBUG_ASSERT(_pFile); io.erase(_pFile); }

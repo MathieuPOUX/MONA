@@ -31,7 +31,7 @@ struct Handler : virtual Object {
 	void	 reset(Signal& signal);
 	uint32_t	 flush(bool last=false);
 
-	/*!
+	/**
 	Try to queue a shared RunnerType, returns false if failed */
 	template<typename RunnerType, typename = typename std::enable_if<std::is_constructible<Shared<Runner>, RunnerType>::value>::type>
 	bool tryQueue(RunnerType&& pRunner) const {
@@ -43,11 +43,11 @@ struct Handler : virtual Object {
 		_pSignal->set();
 		return true;
 	}
-	/*!
+	/**
 	Try to build and queue a RunnerType, returns false if failed */
 	template <typename RunnerType, typename ...Args>
 	bool tryQueue(Args&&... args) const { return tryQueue(std::make_shared<RunnerType>(std::forward<Args>(args)...)); }
-	/*!
+	/**
 	Try to queue an event with arguments call, returns false if failed */
 	template<typename ResultType, typename ...Args>
 	bool tryQueue(const Event<void(ResultType)>& onResult, Args&&... args) const {
@@ -60,31 +60,31 @@ struct Handler : virtual Object {
 		};
 		return tryQueue(std::make_shared<Result>(onResult, std::forward<Args>(args)...));
 	}
-	/*!
+	/**
 	Try to queue an event without argument, returns false if failed */
 	bool tryQueue(const Event<void()>& onResult) const;
-	/*!
+	/**
 	Queue a shared RunnerType, returns false if failed */
 	template<typename RunnerType, typename = typename std::enable_if<std::is_constructible<Shared<Runner>, RunnerType>::value>::type>
 	void queue(RunnerType&& pRunner) const {
 		if (!tryQueue(std::forward<RunnerType>(pRunner)))
 			FATAL_ERROR("Impossible to queue ", typeOf<RunnerType>());
 	}
-	/*!
+	/**
 	Build and queue a RunnerType, returns false if failed */
 	template <typename RunnerType, typename ...Args>
 	void queue(Args&&... args) const {
 		if(!tryQueue(std::make_shared<RunnerType>(std::forward<Args>(args)...)))
 			FATAL_ERROR("Impossible to queue ", typeOf<RunnerType>());
 	}
-	/*!
+	/**
 	Queue an event with arguments call, returns false if failed */
 	template<typename ResultType, typename ...Args>
 	void queue(const Event<void(ResultType)>& onResult, Args&&... args) const {
 		if(!tryQueue(onResult, std::forward<Args>(args)...))
 			FATAL_ERROR("Impossible to queue ", typeOf(onResult));
 	}
-	/*!
+	/**
 	Queue an event without argument, returns false if failed */
 	void queue(const Event<void()>& onResult) const {
 		if(!tryQueue(onResult))

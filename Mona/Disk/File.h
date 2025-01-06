@@ -22,7 +22,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 File is a Path file with read and write operation,
 it's performance oriented, supports UTF8 path, and can be used with IOFile to work in a asynchronous way */
 struct File : virtual Object {
@@ -31,7 +31,7 @@ struct File : virtual Object {
 	typedef Event<void(bool deletion)>						OnFlush;
 	NULLABLE(!_loaded)
 
-	/*!
+	/**
 	Decoder offers to decode data in the reception thread when file is used with IOFile,
 	If pBuffer is reseted, no onReaden is callen (data captured),
 	If returns > 0 it continue reading operation (reads returned size) */
@@ -75,21 +75,21 @@ struct File : virtual Object {
 	uint64_t		queueing() const;
 
 	// File operation
-	/*!
+	/**
 	Load the file, as expensive as a FileSystem::GetAttributes!
 	If reading error => Ex::Permission || Ex::Unfound || Ex::Intern */
 	virtual bool		load(Exception& ex); // virtual to allow to detect loading error with IOFile (see HTTPFileSender sample)
-	/*!
+	/**
 	If reading error returns -1 => Ex::System::File || Ex::Permission */
 	int					read(Exception& ex, void* data, uint32_t size);
-	/*!
+	/**
 	If writing error => Ex::System::File || Ex::Permission */
 	bool				write(Exception& ex, const void* data, uint32_t size);
-	/*!
+	/**
 	If deletion error => Ex::System::File || Ex::Permission
 	/!\ One time deleted no more write operation is possible */
 	bool				erase(Exception& ex);
-	/*!
+	/**
 	Create file or folder */
 	bool				create(Exception& ex) { return write(ex, NULL, 0); }
 

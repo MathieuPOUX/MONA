@@ -25,7 +25,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 IOFile performs asynchrone writing and reading operation,
 It uses a Thread::ProcessorCount() threads with low priority to load/read/write files
 Indeed even if SSD drive allows parallel reading and writing operation every operation sollicate too the CPU,
@@ -38,14 +38,14 @@ struct IOFile : virtual Object, Thread { // Thread is for file watching!
 	const Handler&	  handler;
 	const ThreadPool& threadPool;
 
-	/*!
+	/**
 	Subscribe read */
 	template<typename FileType>
 	void subscribe(const Shared<FileType>& pFile, const File::OnReaden& onReaden, const File::OnError& onError) {
 		pFile->_onError = onError;
 		pFile->_onReaden = onReaden;
 	}
-	/*!
+	/**
 	Subscribe read with decoder*/
 	template<typename FileType>
 	void subscribe(const Shared<FileType>& pFile, File::Decoder* pDecoder, const File::OnReaden& onReaden, const File::OnError& onError) {
@@ -53,10 +53,10 @@ struct IOFile : virtual Object, Thread { // Thread is for file watching!
 		pFile->_externDecoder = pDecoder && pFile.get() != (FileType*)pDecoder;
 		pFile->_pDecoder = pDecoder;
 	}
-	/*!
+	/**
 	Subscribe write/delete */
 	void subscribe(const Shared<File>& pFile, const File::OnError& onError, const File::OnFlush& onFlush = nullptr);
-	/*!
+	/**
 	Unsubscribe */
 	template<typename FileType>
 	void unsubscribe(Shared<FileType>& pFile) {
@@ -65,23 +65,23 @@ struct IOFile : virtual Object, Thread { // Thread is for file watching!
 		pFile->_onError = nullptr;
 		pFile.reset();
 	}
-	/*!
+	/**
 	Async file loads */
 	void load(const Shared<File>& pFile);
-	/*!
+	/**
 	Async read with file load if file not loaded
 	size default = 0xFFFF (Best buffer performance, see http://zabkat.com/blog/buffered-disk-access.htm) */
 	void read(const Shared<File>& pFile, uint32_t size=0xFFFF);
-	/*!
+	/**
 	Async write with file load if file not loaded */
 	void write(const Shared<File>& pFile, const Packet& packet);
-	/*!
+	/**
 	Async file/folder deletion*/
 	void erase(const Shared<File>& pFile);
-	/*!
+	/**
 	Async file/folder creation */
 	void create(const Shared<File>& pFile) { write(pFile, nullptr); }
-	/*!
+	/**
 	Async file watcher, watch until pFileWatcher becomes unique */
 	void watch(const Shared<const FileWatcher>& pFileWatcher, const FileWatcher::OnUpdate& onUpdate);
 

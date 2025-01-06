@@ -29,23 +29,23 @@ enum {
 	REQUEST_FORCE_RELATIVE = 2,  /// remove leading and trailing whitespace from tokens
 };
 
-/*!
+/**
 URL parser,
 to write use directly String like that => 
 String(protocol, "://", address, "/", String::URI(path), '?', String::URI(query)); */
 struct URL : virtual Static {
-	/*!
+	/**
 	Parse URL, assign protocol and address and return request ("/request" if aboluste) */
 	static const char* Parse(const std::string& url, std::string& protocol, std::string& address) { std::size_t size(url.size()); return Parse(url.data(), size, protocol, address); }
 	static const char* Parse(const char* url, std::string& protocol, std::string& address) { std::size_t size(std::string::npos); return Parse(url, size, protocol, address); }
 	static const char* Parse(const char* url, std::size_t& size, std::string& protocol, std::string& address);
-	/*!
+	/**
 	Parse URL, assign address and return request */
 	static const char* Parse(const std::string& url, std::string& address) { std::size_t size(url.size()); return Parse(url.data(), size, address, address); }
 	static const char* Parse(const char* url, std::string& address) { std::size_t size(std::string::npos); return Parse(url, size, address, address); }
 	static const char* Parse(const char* url, std::size_t& size, std::string& address) { return Parse(url, size, address, address); }
 	
-	/*!
+	/**
 	Parse Request, assign path and return query */
 	static const char* ParseRequest(const std::string& request, Path& path, REQUEST_OPTIONS options=0) { std::size_t size(request.size()); return ParseRequest(request.data(), size, path, options); }
 	static const char* ParseRequest(const char* request, Path& path, REQUEST_OPTIONS options = 0) { std::size_t size(std::string::npos); return ParseRequest(request, size, path, options); }

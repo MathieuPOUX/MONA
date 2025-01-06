@@ -17,7 +17,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #pragma once
 
 #include "Mona/Mona.h"
-#include "Mona/Format/BinaryReader.h"
+#include "Mona/Memory/BinaryReader.h"
 #include "Mona/Util/Exceptions.h"
 #include OpenSSL(hmac.h)
 #include OpenSSL(err.h)

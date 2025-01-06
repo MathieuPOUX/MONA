@@ -30,48 +30,48 @@ struct SocketAddress : private IPAddress, virtual Object {
 	CONST_STRING(addrToString());
 	NULLABLE(isWildcard() && !port())
 
-	/*!
+	/**
 	Creates a wildcard (all zero) IPv4/IPv6 SocketAddress */
 	SocketAddress(IPAddress::Family family = IPAddress::IPv4) : IPAddress(family) {}
-	/*!
+	/**
 	Create SocketAddress from a native socket address */
 	SocketAddress(const sockaddr& addr) : IPAddress(addr) {}
-	/*!
+	/**
 	Create a SocketAddress copy from other */
 	SocketAddress(const SocketAddress& other) : IPAddress(other, other.port()) {}
-	/*!
+	/**
 	Create a SocketAddress from host and port number */
 	SocketAddress(const IPAddress& host, uint16_t port) : IPAddress(host, port) {}
-	/*!
+	/**
 	Create a SocketAddress from binary data */
 	SocketAddress(BinaryReader& reader, Family family = IPv4) : IPAddress(reader, family) { setPort(reader.read16()); }
-	/*!
+	/**
 	Set SocketAddress from a native socket address */
 	SocketAddress& set(const sockaddr& addr) { IPAddress::set(addr); return *this;}
-	/*!
+	/**
 	Set a SocketAddress from other */
 	SocketAddress& set(const SocketAddress& other) { return set(other, other.port()); }
-	/*!
+	/**
 	Set a SocketAddress from other */
 	SocketAddress& operator=(const SocketAddress& other) { return set(other); }
 	SocketAddress& operator=(std::nullptr_t) { return reset(); }
-	/*!
+	/**
 	set SocketAddress from a given IP and a given port */
 	SocketAddress& set(const IPAddress& host, uint16_t port) { IPAddress::set(host, port); return *this; }
-	/*!
+	/**
 	set SocketAddress from a given IP and a parsed port */
 	bool set(Exception& ex, const IPAddress& host, const std::string& port) { return set(ex, host, port.c_str()); }
 	bool set(Exception& ex, const IPAddress& host, const char* port);
-	/*!
+	/**
 	Set SocketAddress from binary data */
 	SocketAddress& set(BinaryReader& reader, Family family = IPv4);
-	/*!
+	/**
 	set SocketAddress from a parsed IP and a given port */
 	bool set(Exception& ex, const std::string& host, uint16_t port) { return setIntern(ex, host.c_str(), port, false); }
 	bool set(Exception& ex, const char* host, uint16_t port) { return setIntern(ex, host, port, false); }
 	bool setWithDNS(Exception& ex, const std::string& host, uint16_t port) { return setIntern(ex, host.c_str(), port, true); }
 	bool setWithDNS(Exception& ex, const char* host, uint16_t port) { return setIntern(ex, host, port, true); }
-	/*!
+	/**
 	set SocketAddress from a parsed IP and a parsed port */
 	bool set(Exception& ex, const std::string& host, const std::string& port) { return setIntern(ex, host.c_str(), port.c_str(), false); }
 	bool set(Exception& ex, const char* host,		 const std::string& port) { return setIntern(ex, host, port.c_str(), false); }
@@ -81,7 +81,7 @@ struct SocketAddress : private IPAddress, virtual Object {
 	bool setWithDNS(Exception& ex, const char* host,		const std::string& port) { return setIntern(ex, host, port.c_str(), true); }
 	bool setWithDNS(Exception& ex, const std::string& host, const char* port) { return setIntern(ex, host.c_str(), port, true); }
 	bool setWithDNS(Exception& ex, const char* host,		const char* port) { return setIntern(ex, host, port, true); }
-	/*!
+	/**
 	set SocketAddress from a parsed IP:port */
 	bool set(Exception& ex, const std::string& hostAndPort) { return setIntern(ex, hostAndPort.c_str(), false); }
 	bool set(Exception& ex, const char* hostAndPort) { return setIntern(ex, hostAndPort, false); }

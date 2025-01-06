@@ -36,7 +36,7 @@ struct FileReader : virtual Object {
 
 	bool opened() const { return operator bool(); }
 
-	/*!
+	/**
 	Async open file to read, return *this to allow a open(path).read(...) call 
 	/!\ don't open really the file, because performance are better if opened on first read operation */
 	FileReader& open(const Path& path) {
@@ -45,7 +45,7 @@ struct FileReader : virtual Object {
 		io.subscribe(_pFile, newDecoder(), onReaden, onError);
 		return self;
 	}
-	/*!
+	/**
 	Read data */
 	void		read(uint32_t size = 0xFFFF) { DEBUG_ASSERT(_pFile);  io.read(_pFile, size); }
 	void		close() { if (_pFile) io.unsubscribe(_pFile); }

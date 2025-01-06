@@ -17,6 +17,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #include "Mona/Disk/PersistentData.h"
 #include "Mona/Disk/FileSystem.h"
 #include "Mona/Disk/File.h"
+#include "Mona/Format/Hexa.h"
 #include OpenSSL(evp.h)
 
 
@@ -74,7 +75,7 @@ void PersistentData::processEntry(Exception& ex,Entry& entry) {
 		entry.path.insert(0, "/");
 
 	FileSystem::MakeFolder(directory.append(FileSystem::Resolve(entry.path)));
-	string name,file;
+	string file, name;
 
 	if (entry) {
 
@@ -88,10 +89,10 @@ void PersistentData::processEntry(Exception& ex,Entry& entry) {
 		char result[16];
 		EVP_Digest(entry.data(), entry.size(), BIN result, NULL, EVP_md5(), NULL);
 
-		String::Assign(name, String::Hex(result, sizeof(result)));
+		// format file and name
+		String::assign(file, directory, Hexa(result).to(name));
 
 		// write the file
-		file.assign(directory).append(name);
 		File writer(file, File::MODE_WRITE);
 		if (!writer.load(ex))
 			return;
@@ -136,7 +137,7 @@ bool PersistentData::loadDirectory(Exception& ex, const string& directory, const
 		string name, value;
 		FileSystem::GetName(file, name);
 		if (FileSystem::IsFolder(file)) {
-			if (loadDirectory(ex, file, String::Assign(value, path, '/', name), forEach))
+			if (loadDirectory(ex, file, String::assign(value, path, '/', name), forEach))
 				hasData = true;
 			return true;
 		}
@@ -158,7 +159,7 @@ bool PersistentData::loadDirectory(Exception& ex, const string& directory, const
 		// compute md5
 		char result[16];
 		EVP_Digest(pBuffer->data(), pBuffer->size(), BIN result, NULL, EVP_md5(), NULL);
-		String::Assign(value, String::Hex(result, sizeof(result)));  // HEX lower case
+		String::assign(value, Hexa(result));  // HEX lower case
 		// compare with file name
 		if (value != name) {
 			// erase this data! (bad serialization)

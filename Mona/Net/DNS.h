@@ -27,7 +27,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 This class provides an interface to the domain name service.
 An internal DNS cache is used to speed up name lookups. */
 struct DNS : virtual Static {

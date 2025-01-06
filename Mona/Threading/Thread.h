@@ -42,7 +42,7 @@ struct Thread : virtual Object {
 	
 	static unsigned				ProcessorCount() { unsigned result(std::thread::hardware_concurrency());  return result ? result : 1; }
 	
-	/*!
+	/**
 	A sleep, usefull for test, with imprecise milliseconds resolution (resolution from 5 to 15ms) */
 	static void					Sleep(uint32_t duration) { std::this_thread::sleep_for(std::chrono::milliseconds(duration)); }
 
@@ -52,7 +52,7 @@ struct Thread : virtual Object {
 
 	struct ChangeName : virtual Object {
 		template<typename ...Args>
-		ChangeName(Args&&... args) : _oldName(std::move(_Name)) { SetDebugName(String::Append(_Name, std::forward<Args>(args)...)); }
+		ChangeName(Args&&... args) : _oldName(std::move(_Name)) { SetDebugName(String::append(_Name, std::forward<Args>(args)...)); }
 		~ChangeName() { SetDebugName(_Name = std::move(_oldName)); }
 		operator const std::string&() const { return _Name; }
 	private:

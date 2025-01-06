@@ -15,6 +15,11 @@ cmake --build build
 cmake --install build
 ```
 
+## Documentation
+To build DOxygen doc
+```
+cmake --build build --target doc
+```
 
 ## License
 MonaCPP is licensed under the MIT License.

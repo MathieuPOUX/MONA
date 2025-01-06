@@ -14,6 +14,76 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 */
 
+/**
+ * @defgroup Application Application
+ * @brief Contains the main classes for application management.
+ *
+ * This module includes classes and functions to configure and run applications,
+ * as well as tools like application options and termination signal management.
+ *
+ *
+ * @defgroup Disk Disk
+ * @brief Manages files, the file system, and associated operations.
+ *
+ * This module includes classes to create, read, monitor, and write files,
+ * as well as to manipulate paths and store persistent data.
+ *
+ *
+ * @defgroup Format Format
+ * @brief Handles data formats and content manipulation.
+ *
+ * This module provides tools to read and write binary formats, manipulate strings,  URLs,
+ * XML or JSON.
+ *
+ *
+ * @defgroup Logs Logs
+ * @brief Manages event logging.
+ *
+ * This module includes classes to capture and write logs,
+ * with different backends such as console or files.
+ *
+ *
+ * @defgroup Math Math
+ * @brief Provides cryptographic and Mathematic tools.
+ *
+ * This module includes classes to perform cryptographic operations,
+ * such as Diffie-Hellman algorithms.
+ *
+ *
+ * @defgroup Memory Memory
+ * @brief Designed to manage buffers and memory pools.
+ *
+ * This module allows efficient memory manipulation with buffers and packets.
+ *
+ *
+ * @defgroup Net Net
+ * @brief Handles networking functionalities.
+ *
+ * This module provides classes to manage network connections, sockets,
+ * and protocols such as DNS and TLS.
+ *
+ *
+ * @defgroup Threading Threading
+ * @brief Designed for thread and signal management.
+ *
+ * This module includes classes to create and manage threads,
+ * thread pools, and signal handlers.
+ *
+ *
+ * @defgroup Timing Timing
+ * @brief Provides tools for time management.
+ *
+ * This module includes classes to manipulate dates,
+ * timezones, and timers.
+ *
+ *
+ * @defgroup Util Util
+ * @brief Contains general utility classes.
+ *
+ * This module provides various tools such as exception handling,
+ * events, and parameter management.
+ */
+
 #pragma once
 
 
@@ -96,7 +166,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 namespace Mona {
 
-/*!
+/**
 Use a U(value) conversion to make bitshit and bitright operator safe with signed number */
 template<typename Type>
 static typename std::make_unsigned<Type>::type U(Type value) { return value; }
@@ -109,7 +179,7 @@ void DetectMemoryLeak();
 #endif
 
 
-#define		STATIC_ASSERT(...)				{ static_assert(__VA_ARGS__, #__VA_ARGS__); }
+#define		STATIC_ASSERT(ASSERT)			{ static_assert(ASSERT, #ASSERT); }
 
 #if defined(_DEBUG)
 #if defined(_WIN32)
@@ -124,7 +194,7 @@ void DetectMemoryLeak();
 #endif
 
 ///// TYPES /////
-/*!
+/**
 unique_ptr on the mode of shared and which forbid custom deleter (too complicated, use a event on object deletion rather) */
 template<typename Type>
 struct Unique : std::unique_ptr<Type> {
@@ -142,7 +212,7 @@ struct Unique : std::unique_ptr<Type> {
 	template<typename NewType>
 	Unique& operator=(NewType* pType) { std::unique_ptr<Type>::reset(pType); return self; };
 };
-/*!
+/**
 shared_ptr which forbid pointer/new construction (too slow) and custom deleter (too complicated, use a event on object deletion rather) */
 template<typename Type>
 struct Shared : std::shared_ptr<Type> {
@@ -318,7 +388,7 @@ inline RangeType range(Type value) {
 const std::string& typeOf(const std::type_info& info);
 template<typename ObjectType>
 inline const std::string& typeOf(const ObjectType& object) { return typeOf(typeid(object)); }
-/*!
+/**
 Try to prefer this template typeOf version, because is the more faster*/
 template<typename ObjectType>
 inline const std::string& typeOf() {
@@ -336,6 +406,51 @@ struct is_container : std::false_type {};
 template <typename T>
 struct is_container<T, std::void_t<decltype(std::declval<T>().emplace(std::begin(std::declval<T>())))>> : std::true_type {};
 
+
+template <typename T, typename = void>
+struct is_map : std::false_type {};
+template <typename T>
+struct is_map<T, std::void_t<
+    typename T::key_type,
+    typename T::mapped_type,
+    typename T::value_type,
+    decltype(std::declval<T>().begin()),
+    decltype(std::declval<T>().end())
+>> : std::conditional_t<
+        is_container<T>::value && std::is_same_v<typename T::value_type, std::pair<const typename T::key_type, typename T::mapped_type>>,
+        std::true_type,
+        std::false_type
+    > {};
+	
+
+template <typename T, typename = void>
+struct is_string_mapped : std::false_type {};
+
+template <typename T>
+struct is_string_mapped<T, std::enable_if_t<
+    is_map<T>::value &&
+    std::is_same_v<typename T::key_type, std::string>
+>> : std::true_type {};
+
+// is_list trait with corrected initializer_list specialization
+template <typename T, typename = void>
+struct is_list : std::false_type {};
+
+// Partial specialization for std::initializer_list
+template <typename T>
+struct is_list<std::initializer_list<T>, void> : std::true_type {};
+
+// General case for types with value_type, begin(), end(), and not a map
+template <typename T>
+struct is_list<T, std::void_t<
+    typename T::value_type,
+    decltype(std::declval<T>().begin()),
+    decltype(std::declval<T>().end())
+>> : std::conditional_t<
+        is_container<T>::value && !is_map<T>::value,  // Containers but exclude maps
+        std::true_type,
+        std::false_type
+    > {};
 
 
 } // namespace Mona

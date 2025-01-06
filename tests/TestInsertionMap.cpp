@@ -1,5 +1,6 @@
 #include "Mona/Mona.h"
 #include "Mona/Util/InsertionMap.h"
+#include "Mona/Logs/Logs.h"
 
 using namespace std;
 using namespace Mona;
@@ -11,12 +12,12 @@ int main(int argc, char** argv) {
     map["hello"] = "world";
     map["goodbye"] = "everyone";
     CHECK(!map.empty());
-    CHECK(map.size() == 2);
-    CHECK(map.begin()->first == "hello");
+	CHECK(map.size() == 2);
+	CHECK(map.begin()->first == "hello");
     CHECK(map.rbegin()->first == "goodbye");
 
-    // Test at / exception
-    CHECK(map.at("hello") == "world");
+	// Test at / exception
+	CHECK(map.at("hello") == "world");
     bool thrown = false;
     try {
         map.at("missing");

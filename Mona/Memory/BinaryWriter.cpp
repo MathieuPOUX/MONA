@@ -14,7 +14,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 
 */
 
-#include "Mona/Format/BinaryWriter.h"
+#include "Mona/Memory/BinaryWriter.h"
 #include "Mona/Util/Util.h"
 
 

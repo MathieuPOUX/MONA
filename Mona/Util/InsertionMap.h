@@ -12,98 +12,31 @@ struct InsertionMap : virtual Object {
     using size_type       = std::size_t;
     using difference_type = std::ptrdiff_t;
     using key_compare     = Compare;
-    
-private:
-    struct Node {
-        value_type data;
-
-        template<typename K, typename V>
-        Node(K&& k, V&& v) : data(std::forward<K>(k), std::forward<V>(v)) {}
+    struct value_compare {
+        key_compare comp;
+        bool operator()(const value_type& lhs, const value_type& rhs) const {
+            return comp(lhs.first, rhs.first);
+        }
     };
 
-    // The list preserves insertion order.
-    std::list<Node> _order;
-    // The map provides O(log n) lookup by key.
-    std::map<Key, typename std::list<Node>::iterator, Compare> _map;
-    key_compare _comp;
-
-public:
-    // ITERATOR
-    class iterator {
-    public:
-        using iterator_category = std::bidirectional_iterator_tag;
-        using value_type        = std::pair<const Key, Value>;
-        using difference_type   = std::ptrdiff_t;
-        using pointer           = value_type*;
-        using reference         = value_type&;
-
-        iterator() = default;
-        explicit iterator(typename std::list<Node>::iterator it) : _it(it) {}
-
-        iterator& operator++() { ++_it; return *this; }
-        iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-        iterator& operator--() { --_it; return *this; }
-        iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
-
-        reference operator*() const { return _it->data; }
-        pointer operator->() const { return &_it->data; }
-
-        bool operator==(const iterator& other) const { return _it == other._it; }
-        bool operator!=(const iterator& other) const { return _it != other._it; }
-
-        typename std::list<Node>::iterator base() const { return _it; }
-
-    private:
-        typename std::list<Node>::iterator _it;
-    };
-
-    class const_iterator {
-    public:
-        using iterator_category = std::bidirectional_iterator_tag;
-        using value_type        = const std::pair<const Key, Value>;
-        using difference_type   = std::ptrdiff_t;
-        using pointer           = const value_type*;
-        using reference         = const value_type&;
-
-        const_iterator() = default;
-        explicit const_iterator(typename std::list<Node>::const_iterator it) : _it(it) {}
-
-        const_iterator& operator++() { ++_it; return *this; }
-        const_iterator operator++(int) { const_iterator tmp = *this; ++(*this); return tmp; }
-        const_iterator& operator--() { --_it; return *this; }
-        const_iterator operator--(int) { const_iterator tmp = *this; --(*this); return tmp; }
-
-        reference operator*() const { return _it->data; }
-        pointer operator->() const { return &_it->data; }
-
-        bool operator==(const const_iterator& other) const { return _it == other._it; }
-        bool operator!=(const const_iterator& other) const { return _it != other._it; }
-
-        typename std::list<Node>::const_iterator base() const { return _it; }
-
-    private:
-        typename std::list<Node>::const_iterator _it;
-    };
-
+    using iterator =  typename std::list<value_type>::iterator;
+    using const_iterator = typename std::list<value_type>::const_iterator;
     using reverse_iterator = std::reverse_iterator<iterator>;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // CONSTRUCTORS & ASSIGNMENT
-    InsertionMap() : _comp(Compare()) {}
-    explicit InsertionMap(const Compare& comp) : _comp(comp) {}
-
-    InsertionMap(const InsertionMap& other) : _comp(other._comp) {
+    InsertionMap() {}
+    InsertionMap(const InsertionMap& other) {
         for (const auto& n : other._order) {
-            insert(n.data.first, n.data.second);
+            insert(n.first, n.second);
         }
     }
 
     InsertionMap& operator=(const InsertionMap& other) {
         if (this != &other) {
             clear();
-            _comp = other._comp;
             for (const auto& n : other._order) {
-                insert(n.data.first, n.data.second);
+                insert(n.first, n.second);
             }
         }
         return *this;
@@ -124,30 +57,29 @@ public:
     void swap(InsertionMap& other) noexcept {
         _order.swap(other._order);
         _map.swap(other._map);
-        std::swap(_comp, other._comp);
     }
 
     // ELEMENT ACCESS
     Value& operator[](const Key& key) {
-        auto it = _map.find(key);
-        if (it == _map.end()) {
+        auto it = _map.lower_bound(key);
+        if (it == _map.end() || it->first != key) {
             _order.emplace_back(key, Value{});
             auto list_it = std::prev(_order.end());
-            _map[key] = list_it;
-            return list_it->data.second;
+			_map.emplace_hint(it, list_it->first, list_it);
+			return list_it->second;
         }
-        return it->second->data.second;
+        return it->second->second;
     }
 
     Value& operator[](Key&& key) {
-        auto it = _map.find(key);
-        if (it == _map.end()) {
+        auto it = _map.lower_bound(key);
+        if (it == _map.end() || it->first != key) {
             _order.emplace_back(std::move(key), Value{});
             auto list_it = std::prev(_order.end());
-            _map[list_it->data.first] = list_it;
-            return list_it->data.second;
+            _map.emplace_hint(it, list_it->first, list_it);
+            return list_it->second;
         }
-        return it->second->data.second;
+        return it->second->second;
     }
 
     Value& at(const Key& key) {
@@ -155,7 +87,7 @@ public:
         if (it == _map.end()) {
             throw std::out_of_range("Key not found");
         }
-        return it->second->data.second;
+        return it->second->second;
     }
 
     const Value& at(const Key& key) const {
@@ -163,7 +95,7 @@ public:
         if (it == _map.end()) {
             throw std::out_of_range("Key not found");
         }
-        return it->second->data.second;
+        return it->second->second;
     }
 
     // ITERATORS
@@ -201,42 +133,39 @@ public:
     }
 
     std::pair<iterator, bool> insert(const Key& k, const Value& v) {
-        auto it = _map.find(k);
-        if (it != _map.end()) {
+         auto it = _map.lower_bound(k);
+        if (it != _map.end() && it->first == k) {
             // Key exists, return old value
             return {iterator(it->second), false};
         }
 		// New key
 		_order.emplace_back(k, v);
 		auto list_it = std::prev(_order.end());
-		_map[k] = list_it;
+		_map.emplace_hint(it, k, list_it);
 		return {iterator(list_it), true};
     }
 
     std::pair<iterator, bool> insert_or_assign(const Key& k, Value&& v) {
-        auto it = _map.find(k);
-        if (it != _map.end()) {
-            it->second->data.second = std::move(v);
+        auto it = _map.lower_bound(k);
+        if (it != _map.end() && it->first == k) {
+            it->second->second = std::move(v);
             return {iterator(it->second), false};
-        } else {
-            _order.emplace_back(k, std::move(v));
-            auto list_it = std::prev(_order.end());
-            _map[k] = list_it;
-            return {iterator(list_it), true};
         }
+		_order.emplace_back(k, std::move(v));
+		auto list_it = std::prev(_order.end());
+		_map.emplace_hint(it, k, list_it);
+		return {iterator(list_it), true};
     }
 
     template <class... Args>
-    std::pair<iterator,bool> emplace(Args&&... args) {
-        // Construct a temporary pair to extract the key
-        value_type val(std::forward<Args>(args)...);
-        auto it = _map.find(val.first);
-        if (it != _map.end()) {
+	std::pair<iterator, bool> emplace(const Key& key, Args&&... args) {
+        auto it = _map.lower_bound(key);
+        if (it != _map.end() && it->first == key) {
             return { iterator(it->second), false };
         }
-        _order.emplace_back(val.first, std::move(val.second));
+        _order.emplace_back(key, std::forward<Args>(args)...);
         auto list_it = std::prev(_order.end());
-        _map[list_it->data.first] = list_it;
+        _map.emplace_hint(it, list_it->first, list_it);
         return { iterator(list_it), true };
     }
 
@@ -256,10 +185,9 @@ public:
 
     iterator erase(iterator pos) {
         if (pos == end()) return end();
-        auto list_it = pos.base();
-        _map.erase(list_it->data.first);
-        auto next = std::next(list_it);
-        _order.erase(list_it);
+        _map.erase(pos->first);
+        auto next = std::next(pos);
+        _order.erase(pos);
         return iterator(next);
     }
 
@@ -305,19 +233,17 @@ public:
     }
 
     key_compare key_comp() const {
-        return _comp;
+        return _map.key_comp();
     }
-
-    struct value_compare {
-        key_compare comp;
-        bool operator()(const value_type& lhs, const value_type& rhs) const {
-            return comp(lhs.first, rhs.first);
-        }
-    };
 
     value_compare value_comp() const {
-        return value_compare{ _comp };
+        return value_compare{_map.key_comp()};
     }
+private:
+    // The list preserves insertion order.
+    std::list<value_type> _order;
+    // The map provides O(log n) lookup by key.
+    std::map<Key, typename std::list<value_type>::iterator, Compare> _map;
 };
 
 } // namespace Mona

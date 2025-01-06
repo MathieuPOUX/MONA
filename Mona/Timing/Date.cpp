@@ -55,7 +55,9 @@ const char* Date::_MonthNames[] = {
 	"May",
 	"June",
 	"July",
-	"August",
+   
+
+    "August",
 	"September",
 	"October",
 	"November",
@@ -504,7 +506,7 @@ bool Date::update(Exception& ex, const char* current, size_t size, const char* f
 					continue;
 				}
 			} else if (!CAN_READ || c != *current) {
-				ex.set<Ex::Format>(*current, " doesn't match with ", c);
+				ex.set<Ex::Format::Incompatible>(*current, " doesn't match with ", c);
 				return false;
 			}
 			READ;
@@ -518,13 +520,13 @@ bool Date::update(Exception& ex, const char* current, size_t size, const char* f
 		switch (*format++) {
 			default:
 				if (!optional) {
-					ex.set<Ex::Format>("Unknown date ", c, " pattern");
+					ex.set<Ex::Format::Incompatible>("Unknown date ", c, " pattern");
 					return false;
 				}
 				break;
 			case '%': // Allow % in the string in catching %% case
 				if (*current != '%') {
-					ex.set<Ex::Format>("% doesn't match with ", *current);
+					ex.set<Ex::Format::Incompatible>("% doesn't match with ", *current);
 					return false;
 				}
 				break;
@@ -548,7 +550,7 @@ bool Date::update(Exception& ex, const char* current, size_t size, const char* f
 					}
 				}
 				if (!month && !optional) {
-					ex.set<Ex::Format>("Impossible to parse ", value, " as a valid month");
+					ex.set<Ex::Format::Invalid>("Impossible to parse ", value, " as a valid month");
 					return false;
 				}
 				break;
@@ -610,7 +612,7 @@ bool Date::update(Exception& ex, const char* current, size_t size, const char* f
 					++count;
 				}
 				if (!count && !optional) {
-					ex.set<Ex::Format>("No time value to parse");
+					ex.set<Ex::Format::Incompatible>("No time value to parse");
 					return false;
 				}
 				_time += String::toNumber<int64_t>(times, count) * factor;
@@ -631,7 +633,7 @@ bool Date::update(Exception& ex, const char* current, size_t size, const char* f
 					if (hour < 12)
 						hour += 12;
 				} else if (!optional) {
-					ex.set<Ex::Format>("Impossible to parse ", ampm, " as a valid AM/PM information");
+					ex.set<Ex::Format::Invalid>("Impossible to parse ", ampm, " as a valid AM/PM information");
 					return false;
 				}
 				break;
@@ -703,7 +705,7 @@ bool Date::update(Exception& ex, const char* current, size_t size, const char* f
 		update(time() + _time);
 
 	if (microsecond > 0)
-		ex.set<Ex::Format>("Microseconds information lost, not supported by Mona Date system");
+		ex.set<Ex::Format::Unsupported>("Microseconds information lost, not supported by Mona Date system");
 	return true;
 }
 
@@ -776,7 +778,7 @@ bool Date::parseAuto(Exception& ex, const char* data, size_t count) {
 		if (tPos==8) // compact format (20050108T123000, 20050108T123000Z, 20050108T123000.123+0200)
 			return update(ex, data, count, "%Y%m%dT%H%M%s[%z]");
 	}
-	ex.set<Ex::Format>("Impossible to determine automatically format of date ", Packet(data, count));
+	ex.set<Ex::Format::Invalid>("Impossible to determine automatically format of date ", Packet(data, count));
 	return false;
 }
 

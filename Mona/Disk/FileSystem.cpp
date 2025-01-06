@@ -324,7 +324,7 @@ int FileSystem::ListFiles(Exception& ex, const char* path, const ForEach& forEac
 	do {
 		if (wcscmp(fileData.cFileName, L".") != 0 && wcscmp(fileData.cFileName, L"..") != 0) {
 			++count;
-			String::Assign(file, directory, fileData.cFileName);
+			String::assign(file, directory, fileData.cFileName);
 			if (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 				file += '/';
 				if (mode)
@@ -345,7 +345,7 @@ int FileSystem::ListFiles(Exception& ex, const char* path, const ForEach& forEac
 	while((pEntry = readdir(pDirectory))) {
 		if (strcmp(pEntry->d_name, ".")!=0 && strcmp(pEntry->d_name, "..")!=0) {
 			++count;
-			String::Assign(file, directory, pEntry->d_name);
+			String::assign(file, directory, pEntry->d_name);
 			// Cross-platform solution when DT_UNKNOWN or symbolic link
 			bool isFolder(false);
 			if(pEntry->d_type==DT_DIR) {
