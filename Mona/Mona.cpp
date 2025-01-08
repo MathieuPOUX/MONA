@@ -18,6 +18,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #include "Mona/Format/String.h"
 #include <mutex>
 #include <map>
+#include <thread>
 #if !defined(_WIN32)
 #include <cxxabi.h>
 #include <signal.h>
@@ -162,8 +163,9 @@ const uint16_t ASCII::_CharacterTypes[128] =  {
 const string& typeOf(const type_info& info) {
 	static map<size_t, string> Types;
 	static std::atomic_flag  _FastMutex; // keep mutex and not thread_local because can be used by Runner!
-	while (_FastMutex.test_and_set(std::memory_order_acquire))
+	while (_FastMutex.test_and_set(std::memory_order_acquire)) {
 		this_thread::yield();
+	}
 	string& type = Types[info.hash_code()];
 	if (!type.empty()) {
 		_FastMutex.clear(std::memory_order_release);

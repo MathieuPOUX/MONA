@@ -23,28 +23,45 @@ using namespace std;
 
 namespace Mona {
 
-BinaryWriter::BinaryWriter(char* buffer, uint32_t size, Bytes::Order byteOrder) :
-	_offset(0), _pBuffer(new Buffer(size, buffer)), _reference(false), _flipBytes(byteOrder != Bytes::ORDER_NATIVE) {
-	_pBuffer->resize(0);
+BinaryWriter::BinaryWriter(char* buffer, size_t size, Bytes::Order byteOrder) :
+	_pos(0), _view(buffer, size), _flipBytes(byteOrder != Bytes::ORDER_NATIVE) {
 }
-BinaryWriter::BinaryWriter(Buffer& buffer, Bytes::Order byteOrder) :
-	_offset(buffer.size()), _pBuffer(&buffer), _reference(true), _flipBytes(byteOrder != Bytes::ORDER_NATIVE) {
-}
-
-BinaryWriter::~BinaryWriter() {
-	if (!_reference)
-		delete _pBuffer;
+BinaryWriter::BinaryWriter(string& buffer, Bytes::Order byteOrder) :
+	_pos(buffer.size()), _pBuffer(&buffer), _flipBytes(byteOrder != Bytes::ORDER_NATIVE) {
 }
 
-char* BinaryWriter::buffer(uint32_t size) {
-	uint32_t oldSize(_pBuffer->size());
-	_pBuffer->resize(oldSize+size);
-	return _pBuffer->data() + oldSize;
+BinaryWriter& BinaryWriter::resize(size_t size) {
+	if (_pBuffer) {
+		_pBuffer->resize(_pos + size);
+	} else {
+		if(size>_view.size()) {
+			FATAL_ERROR("Static buffer exceeds maximum ", _view.size(), " bytes capacity");
+		}
+		_pos = size;
+	}
+	return self;
 }
 
-BinaryWriter& BinaryWriter::writeRandom(uint32_t count) {
-	while(count--)
+BinaryWriter& BinaryWriter::append(const void* data, size_t size) {
+	memcpy(buffer(size), data, size);
+	return self;
+}
+
+BinaryWriter& BinaryWriter::append(size_t count, char value) {
+	memset(buffer(count), value, count);
+	return self;
+}
+
+char* BinaryWriter::buffer(size_t size) {
+	uint32_t oldSize(this->size());
+	resize(oldSize+size);
+	return STR data() + oldSize;
+}
+
+BinaryWriter& BinaryWriter::writeRandom(size_t count) {
+	while(count--) {
 		write8(Util::Random<uint8_t>());
+	}
 	return *this;
 }
 

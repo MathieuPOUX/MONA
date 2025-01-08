@@ -91,3 +91,9 @@ add_test(NAME ${Name} COMMAND ${Test})
 
 createTest(tests/TestString.cpp)
 add_test(NAME ${Name} COMMAND ${Test})
+
+createTest(tests/TestPacket.cpp)
+add_test(NAME ${Name} COMMAND ${Test})
+
+createTest(tests/TestFile.cpp)
+add_test(NAME ${Name} COMMAND ${Test})

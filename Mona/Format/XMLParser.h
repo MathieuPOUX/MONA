@@ -90,7 +90,7 @@ private:
 	Parameters					_attributes;
 	bool						_running;
 	bool						_reseted;
-	Shared<Buffer>				_pInner;
+	Shared<std::string>			_pInner;
 
 	// state
 	bool						_started;

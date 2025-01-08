@@ -17,21 +17,20 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #pragma once
 
 #include "Mona/Mona.h"
-#include "Mona/Memory/Buffer.h"
+#include "Mona/Memory/Bytes.h"
 
 namespace Mona {
 
 struct BinaryWriter : Bytes, virtual Object {
 	NULLABLE(empty())
 
-	BinaryWriter(char* buffer, uint32_t size, Bytes::Order byteOrder = Bytes::ORDER_NETWORK);
-	BinaryWriter(Buffer& buffer, Bytes::Order byteOrder = Bytes::ORDER_NETWORK);
-	virtual ~BinaryWriter();
+	BinaryWriter(char* buffer, size_t size, Bytes::Order byteOrder = Bytes::ORDER_NETWORK);
+	BinaryWriter(std::string& buffer, Bytes::Order byteOrder = Bytes::ORDER_NETWORK);
 
-	BinaryWriter& append(const void* data, uint32_t size) { _pBuffer->append(data, size); return self; }
-	BinaryWriter& append(uint32_t count, char value) { _pBuffer->append(count, value); return self; }
-	BinaryWriter& write(const void* data, uint32_t size) { return append(data, size); }
-	template<typename CharType, uint32_t size, typename = typename std::enable_if<std::is_convertible<CharType, const char>::value, CharType>::type>
+	BinaryWriter& append(const void* data, size_t size);
+	BinaryWriter& append(size_t count, char value);
+	BinaryWriter& write(const void* data, size_t size) { return append(data, size); }
+	template<typename CharType, size_t size, typename = typename std::enable_if<std::is_convertible<CharType, const char>::value, CharType>::type>
 	BinaryWriter& write(CharType(&data)[size]) { return append(data, size-1); }
 	template<typename STRType, typename = typename std::enable_if<std::is_convertible<STRType, const char*>::value, STRType>::type>
 	BinaryWriter& write(STRType data) { return append(data, strlen(data)); }
@@ -59,28 +58,29 @@ struct BinaryWriter : Bytes, virtual Object {
 		return write(value, size == std::string::npos ? strlen(value) : size).write8(0);
 	}
 
-	BinaryWriter& writeRandom(uint32_t count=1);
+	BinaryWriter& writeRandom(size_t count=1);
 
-	BinaryWriter& next(uint32_t count = 1) { return resize(size() + count); }
-	BinaryWriter& clear(uint32_t size = 0) { return resize(size); }
-	BinaryWriter& resize(uint32_t size) { if (_pBuffer->data()) _pBuffer->resize(_offset + size,true); return self; }
+	BinaryWriter& next(size_t count = 1) { return resize(size() + count); }
+	BinaryWriter& clear(size_t size = 0) { return resize(size); }
+	BinaryWriter& resize(size_t size);
 
 	// method doesn't supported by BinaryWriter::Null or BinaryWriter static, raise an exception
-	char*	buffer(uint32_t size);
+	char*			buffer(size_t size);
+	//std::string&  	buffer() { return *_pBuffer; }
 
 	// beware, data() can be null in the BinaryWriter::Null case
-	const char*   data() const override { return _pBuffer->data() + _offset; }
-	uint32_t		  size() const override { return _pBuffer->size() - _offset; }
-	Buffer&		  buffer() { return *_pBuffer; }
+	const char* data() const override { return _pBuffer ? (_pBuffer->data()+_pos) : _view.data(); }
+	size_t	  	size() const override { return _pBuffer ? _pBuffer->size() : _pos; }
+	
 
-	static BinaryWriter& Null() { static BinaryWriter Null(Buffer::Null()); return Null; }
+	static BinaryWriter& Null() { static BinaryWriter Null(NULL, 0); return Null; }
 
 private:
 
-	bool			_flipBytes;
-	mutable Buffer*	_pBuffer;
-	bool			_reference;
-	uint32_t			_offset;
+	bool				_flipBytes;
+	std::string* 		_pBuffer;
+	std::string_view 	_view;
+	size_t				_pos;
 };
 
 

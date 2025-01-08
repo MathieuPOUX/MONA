@@ -88,8 +88,8 @@ void Logs::SetDump(const char* name) {
 }
 
 void Logs::Dump(const string& header, const char* data, uint32_t size) {
-	Buffer out;
-	Util::Dump(data, (_DumpLimit<0 || size<uint32_t(_DumpLimit)) ? size : _DumpLimit, out);
+	string out;
+	Util::Dump(out, data, (_DumpLimit<0 || size<uint32_t(_DumpLimit)) ? size : _DumpLimit);
 	for (auto& it : _Loggers) {
 		if (*it.second && !it.second->dump(header, out.data(), out.size()))
 			_Loggers.fail(*it.second);

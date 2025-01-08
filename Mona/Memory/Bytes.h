@@ -28,7 +28,7 @@ struct Bytes : virtual Object {
 	bool				empty() const { return !size(); }
 
 	virtual const char*	data() const = 0;
-	virtual uint32_t		size() const = 0;
+	virtual size_t		size() const = 0;
 	const char*			end() const { return data() + size(); }
 
 	/**

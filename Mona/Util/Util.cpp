@@ -83,7 +83,7 @@ uint64_t Util::Random() {
 	return B + y; // cast gives modulo here!
 }
 
-void Util::Dump(const char* data, uint32_t size, Buffer& buffer) {
+void Util::Dump(string& buffer, const char* data, uint32_t size) {
 	uint8_t b;
 	uint32_t c(0);
 	buffer.resize((uint32_t)ceil((double)size / 16) * 67, false);

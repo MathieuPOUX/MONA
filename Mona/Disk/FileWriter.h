@@ -17,7 +17,7 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #pragma once
 
 #include "Mona/Mona.h"
-#include "Mona/IOFile.h"
+#include "Mona/Disk/IOFile.h"
 
 namespace Mona {
 

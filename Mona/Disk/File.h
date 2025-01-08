@@ -26,9 +26,9 @@ namespace Mona {
 File is a Path file with read and write operation,
 it's performance oriented, supports UTF8 path, and can be used with IOFile to work in a asynchronous way */
 struct File : virtual Object {
-	typedef Event<void(Shared<Buffer>& pBuffer, bool end)>	OnReaden;
-	typedef Event<void(const Exception&)>					OnError;
-	typedef Event<void(bool deletion)>						OnFlush;
+	typedef Event<void(Shared<std::string>& pBuffer, bool end)>	OnReaden;
+	typedef Event<void(const Exception&)>						OnError;
+	typedef Event<void(bool deletion)>							OnFlush;
 	NULLABLE(!_loaded)
 
 	/**
@@ -36,7 +36,7 @@ struct File : virtual Object {
 	If pBuffer is reseted, no onReaden is callen (data captured),
 	If returns > 0 it continue reading operation (reads returned size) */
 	struct Decoder : virtual Object {
-		virtual uint32_t decode(Shared<Buffer>& pBuffer, bool end) = 0;
+		virtual uint32_t decode(Shared<std::string>& pBuffer, bool end) = 0;
 		virtual void onRelease(File& file) {}
 	};
 

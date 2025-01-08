@@ -27,18 +27,18 @@ details (or else see http://mozilla.org/MPL/2.0/).
 namespace Mona {
 
 struct Socket : virtual Object, Net::Stats {
-	typedef Event<void(Shared<Buffer>& pBuffer, const SocketAddress& address)>	  OnReceived;
-	typedef Event<void(const Shared<Socket>& pSocket)>							  OnAccept;
-	typedef Event<void(const Exception&)>										  OnError; const OnError& onError;
-	typedef Event<void()>														  OnFlush;
-	typedef Event<void()>														  OnDisconnection;
+	typedef Event<void(Shared<std::string>& pBuffer, const SocketAddress& address)>	OnReceived;
+	typedef Event<void(const Shared<Socket>& pSocket)>							 	OnAccept;
+	typedef Event<void(const Exception&)>											OnError; const OnError& onError;
+	typedef Event<void()>														  	OnFlush;
+	typedef Event<void()>														  	OnDisconnection;
 
 	/**
 	Decoder offers to decode data in the reception thread when socket is used with IOSocket
 	If pBuffer is reseted, no onReceived is callen (data captured),
 	/!\ pSocket must never be "attached" to the decoder in a instance variable otherwise a memory leak could happen (however a weak attachment stays acceptable) */
 	struct Decoder : virtual Object {
-		virtual void decode(Shared<Buffer>& pBuffer, const SocketAddress& address, const Shared<Socket>& pSocket) = 0;
+		virtual void decode(Shared<std::string>& pBuffer, const SocketAddress& address, const Shared<Socket>& pSocket) = 0;
 		virtual void onRelease(Socket& socket) {}
 	};
 

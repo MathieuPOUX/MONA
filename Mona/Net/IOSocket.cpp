@@ -327,7 +327,7 @@ void IOSocket::read(const Shared<Socket>& pSocket, int error) {
 		Receive(int error, const Shared<Socket>& pSocket) : Action("SocketReceive", error, pSocket) {}
 	private:
 		struct Handle : Action::Handle {
-			Handle(const char* name, const Shared<Socket>& pSocket, const Exception& ex, Shared<Buffer>& pBuffer, const SocketAddress& address, bool& stop) :
+			Handle(const char* name, const Shared<Socket>& pSocket, const Exception& ex, Shared<string>& pBuffer, const SocketAddress& address, bool& stop) :
 				Action::Handle(name, pSocket, ex), _address(address), _pBuffer(move(pBuffer)), _pThread(NULL) {
 				if ((pSocket->_receiving += _pBuffer->size()) < pSocket->recvBufferSize())
 					return;
@@ -347,7 +347,7 @@ void IOSocket::read(const Shared<Socket>& pSocket, int error) {
 				else
 					--pSocket->_reading;
 			}
-			Shared<Buffer>		_pBuffer;
+			Shared<string>		_pBuffer;
 			SocketAddress		_address;
 			ThreadQueue*		_pThread;
 		};
@@ -360,8 +360,9 @@ void IOSocket::read(const Shared<Socket>& pSocket, int error) {
 				uint32_t available = pSocket->available();
 				if (!available) // always get something (maybe a new reception has been gotten since the last pSocket->available() call)
 					available = 2048; // in UDP allows to avoid a NET_EMSGSIZE error (where packet is lost!), and 2048 to be greater than max possible MTU (~1500 bytes)
-				Shared<Buffer>	pBuffer(SET, available);
-				SocketAddress	address;
+				Shared<string>	pBuffer(SET);
+				pBuffer->resize(available);
+				SocketAddress address;
 				int received = pSocket->receive(ex, pBuffer->data(), available, 0, &address);
 				if (received < 0) {
 					if (ex.cast<Ex::Net::Socket>().code != NET_ESHUTDOWN) {

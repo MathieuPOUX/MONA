@@ -23,7 +23,7 @@ using namespace std;
 namespace Mona {
 
 TCPClient::TCPClient(IOSocket& io, const Shared<TLS>& pTLS) : _pTLS(pTLS), io(io), _connected(false), _subscribed(false),
-	_onReceived([this](Shared<Buffer>& pBuffer, const SocketAddress& address) {
+	_onReceived([this](Shared<string>& pBuffer, const SocketAddress& address) {
 		_connected = true;
 		// Check that it exceeds not socket buffer
 		if (!addStreamData(Packet(pBuffer), _pSocket->recvBufferSize())) {

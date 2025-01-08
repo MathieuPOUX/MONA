@@ -121,12 +121,12 @@ void IOFile::read(const Shared<File>& pFile, uint32_t size) {
 		ReadFile(const Handler& handler, const Shared<File>& pFile, const ThreadPool& threadPool, uint32_t size) : WAction("ReadFile", handler, pFile), _threadPool(threadPool), _size(size) {}
 	private:
 		struct Handle : Action::Handle, virtual Object {
-			Handle(const char* name, const Shared<File>& pFile, Shared<Buffer>& pBuffer, bool end) :
+			Handle(const char* name, const Shared<File>& pFile, Shared<string>& pBuffer, bool end) :
 				Action::Handle(name, pFile), _pBuffer(move(pBuffer)), _end(end) {}
 		private:
 			void handle(File& file) { file._onReaden(_pBuffer, _end); }
-			Shared<Buffer>	_pBuffer;
-			bool   _end;
+			Shared<string>	_pBuffer;
+			bool   			_end;
 		};
 		bool process(Exception& ex, const Shared<File>& pFile) {
 			if (pFile.unique())
@@ -134,8 +134,8 @@ void IOFile::read(const Shared<File>& pFile, uint32_t size) {
 			// take the required size just if not exceeds file size to avoid to allocate a too big buffer (expensive)
 			// + use pFile->size() without refreshing to use as same size as caller has gotten it (for example to write a content-length in header)
 			uint64_t available = pFile->size() - pFile->readen();
-			Shared<Buffer>	pBuffer(SET, uint32_t(min(available, _size)));
-			pBuffer.set(uint32_t(min(available, _size)));
+			Shared<string> pBuffer(SET);
+			pBuffer->resize(uint32_t(min(available, _size)));
 			int readen = pFile->read(ex, pBuffer->data(), pBuffer->size());
 			if (readen < 0)
 				return false;
@@ -143,7 +143,7 @@ void IOFile::read(const Shared<File>& pFile, uint32_t size) {
 				pBuffer->resize(readen, true);
 			if (pFile->_pDecoder) {
 				struct Decoding : WAction, virtual Object {
-					Decoding(const Shared<File>& pFile, const ThreadPool& threadPool, Shared<Buffer>& pBuffer, bool end) :
+					Decoding(const Shared<File>& pFile, const ThreadPool& threadPool, Shared<string>& pBuffer, bool end) :
 						_pThread(ThreadQueue::Current()), _threadPool(threadPool), _end(end), WAction("DecodingFile", *pFile->_pHandler, pFile), _pBuffer(move(pBuffer)) {
 					}
 				private:
@@ -156,7 +156,7 @@ void IOFile::read(const Shared<File>& pFile, uint32_t size) {
 							_pThread->queue<ReadFile>(*pFile->_pHandler, pFile, _threadPool, decoded);
 						return true;
 					}
-					Shared<Buffer>		_pBuffer;
+					Shared<string>		_pBuffer;
 					bool				_end;
 					const ThreadPool&	_threadPool;
 					ThreadQueue*		_pThread;

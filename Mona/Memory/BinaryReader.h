@@ -25,11 +25,11 @@ namespace Mona {
 struct BinaryReader : Bytes, virtual Object {
 	NULLABLE(empty())
 
-	BinaryReader(const char* data, uint32_t size, Bytes::Order byteOrder = Bytes::ORDER_NETWORK);
+	BinaryReader(const char* data, size_t size, Bytes::Order byteOrder = Bytes::ORDER_NETWORK);
 
-	char*			read(uint32_t size, char* buffer);
+	char*			read(size_t size, char* buffer);
 	template<typename BufferType, typename = typename std::enable_if<std::is_class<BufferType>::value, BufferType>::type>
-	BufferType&		read(uint32_t size, BufferType& buffer) {
+	BufferType&		read(size_t size, BufferType& buffer) {
 		buffer.resize(size);
 		read(size,STR buffer.data());
 		return buffer;
@@ -51,17 +51,17 @@ struct BinaryReader : Bytes, virtual Object {
 	NumType			read7Bit();
 
 	
-	uint32_t		position() const { return _current-_data; }
-	uint32_t		next(uint32_t count = 1);
-	void			reset(uint32_t position = 0) { _current = _data+(position > _size ? _size : position); }
-	uint32_t		shrink(uint32_t available);
+	size_t			position() const { return _current-_data; }
+	size_t			next(size_t count = 1);
+	void			reset(size_t position = 0) { _current = _data+(position > _size ? _size : position); }
+	size_t			shrink(size_t available);
 
 	const char*		current() const { return _current; }
 	uint32_t		available() const { return _end-_current; }
 
 	// beware, data() can be null
 	const char*		data() const override { return _data; }
-	uint32_t		size() const override { return _size; }
+	size_t			size() const override { return _size; }
 
 	
 	static BinaryReader Null;
@@ -71,7 +71,7 @@ private:
 	const char*		_data;
 	const char*		_end;
 	const char*		_current;
-	uint32_t			_size;
+	size_t			_size;
 };
 
 

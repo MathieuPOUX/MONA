@@ -22,7 +22,7 @@ using namespace std;
 
 namespace Mona {
 
-const Shared<const Bytes> Packet::_NullBytes;
+const Shared<const string> Packet::_NullBytes;
 
 uint32_t Packet::identicalBytes(const Packet& packet) const {
 	uint32_t size = min(_size, packet._size);
@@ -61,10 +61,10 @@ Packet Packet::operator-(uint32_t count) const {
 	return Packet(self, _data, _size - count);
 }
 
-const Shared<const Bytes>& Packet::bufferize() const {
+const Shared<const string>& Packet::bufferize() const {
 	if (_data && !*_ppBuffer) { // if has data, and _ppBuffer is empty (no bufferized) => bufferize!
 		_reference = false;
-		_ppBuffer = new Shared<const Bytes>(Shared<Buffer>(SET, _data, _size));
+		_ppBuffer = new Shared<const string>(SET, _data, _size);
 		_data = (*_ppBuffer)->data(); // fix new data address
 	}
 	return *_ppBuffer;
@@ -77,7 +77,7 @@ Packet& Packet::set(const Packet&& packet) {
 		delete _ppBuffer;
 	else
 		_reference = false;
-	_ppBuffer = packet._ppBuffer ? new Shared<const Bytes>(packet.bufferize()) : nullptr;
+	_ppBuffer = packet._ppBuffer ? new Shared<const string>(packet.bufferize()) : nullptr;
 	_data = packet._data;
 	_size = packet._size;
 	return self;

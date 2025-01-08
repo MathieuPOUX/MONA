@@ -306,7 +306,8 @@ bool Timezone::readTZDatabase(const string& path) {
 	uint32_t size = (uint32_t)ifile.tellg();
 	if (size < 4)
 		return false;
-	Buffer buffer(size);
+	string buffer;
+	buffer.resize(size);
 	ifile.seekg(0);
 	ifile.read(buffer.data(), size);
 

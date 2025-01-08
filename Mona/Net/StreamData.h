@@ -27,10 +27,10 @@ struct StreamData : virtual Object {
 	bool addStreamData(const Packet& packet, uint32_t limit, Args... args) {
 		// Call onStreamData just one time to prefer recursivity rather "while repeat", and allow a "flush" info!
 		uint32_t rest;
-		Shared<Buffer> pBuffer(std::move(_pBuffer)); // because onStreamData returning 0 can delete this!
+		Shared<std::string> pBuffer(std::move(_pBuffer)); // because onStreamData returning 0 can delete this!
 		if (pBuffer) {
 			pBuffer->append(packet.data(), packet.size());
-			Packet buffer(static_pointer_cast<const Bytes>(pBuffer)); // trick to keep reference to _pBuffer!
+			Packet buffer(pBuffer->data(), pBuffer->size()); // trick to keep reference to _pBuffer!
 			rest = min(onStreamData(buffer, std::forward<Args>(args)...), pBuffer->size());
 		} else {
 			Packet buffer(packet);
@@ -56,12 +56,12 @@ struct StreamData : virtual Object {
 		return true;
 	}
 	void clearStreamData() { _pBuffer.reset(); }
-	Shared<Buffer>& clearStreamData(Shared<Buffer>& pBuffer) { return pBuffer = std::move(_pBuffer); }
+	Shared<std::string>& clearStreamData(Shared<std::string>& pBuffer) { return pBuffer = std::move(_pBuffer); }
 
 private:
 	virtual uint32_t onStreamData(Packet& buffer, Args... args) = 0;
 
-	Shared<Buffer> _pBuffer;
+	Shared<std::string> _pBuffer;
 };
 
 } // namespace Mona

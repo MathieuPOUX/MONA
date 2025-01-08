@@ -30,7 +30,7 @@ FileLogger::FileLogger(string&& dir, uint32_t sizeByFile, uint16_t rotation) : _
 bool FileLogger::log(LOG_LEVEL level, const Path& file, long line, const string& message) {
 	static string Buffer; // max size controlled by Logs system!
 	static Exception Ex;
-	Logs::Format(level, file, line, message, Thread::CurrentId()).to(Buffer);
+	String::assign(Buffer, Logs::Format(level, file, line, message, Thread::CurrentId()));
 	if (!_pFile->write(Ex, Buffer.data(), Buffer.size())) {
 		_pFile.reset();
 		return false;

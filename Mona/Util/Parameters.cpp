@@ -137,7 +137,8 @@ bool Parameters::ParseIniFile(const string& path, Parameters& parameters) {
 	uint32_t size = Mona::range<uint32_t>(file.size());
 	if (size == 0)
 		return true;
-	Buffer buffer(size);
+	string buffer;
+	buffer.resize(size);
 	if (file.read(ex, buffer.data(), size) < 0)
 		return false;
 

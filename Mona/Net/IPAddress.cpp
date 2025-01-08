@@ -441,7 +441,8 @@ private:
 
 bool IPAddress::GetLocals(Exception& ex, std::vector<IPAddress>& locals) {
 #if defined (_WIN32)
-	Buffer buffer(sizeof(IP_ADAPTER_ADDRESSES));
+	string buffer;
+	buffer.resize(sizeof(IP_ADAPTER_ADDRESSES));
 	ULONG size = sizeof(IP_ADAPTER_ADDRESSES);
 	PIP_ADAPTER_ADDRESSES pAddresses = (IP_ADAPTER_ADDRESSES *)buffer.data(), adapt = NULL;
 	PIP_ADAPTER_UNICAST_ADDRESS aip = NULL;
@@ -501,7 +502,8 @@ bool IPAddress::GetLocals(Exception& ex, std::vector<IPAddress>& locals) {
 
 	int res;
 	if ((res = ::ioctl(fd, SIOCGIFCONF, &ifc)) >= 0) {
-		Buffer buffer(ifc.ifc_len);
+		string buffer;
+		buffer.resize(ifc.ifc_len);
 		ifc.ifc_buf = (caddr_t)buffer.data();
 		if ((res = ::ioctl(fd, SIOCGIFCONF, &ifc)) >= 0) {
 			// Read all addresses

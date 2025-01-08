@@ -154,10 +154,11 @@ RESET:
 
 				// skip space
 				++_current;
-				if (!_pInner)
-					while (_current < _packet.end() && isspace(*_current))
+				if (!_pInner) {
+					while (_current < _packet.end() && isspace(*_current)) {
 						++_current;
-
+					}
+				}
 				_tags.pop_back();
 				next = onEndXMLElement(String::Scoped(name, size, _packet));
 
@@ -179,8 +180,9 @@ RESET:
 
 					_current += 7;
 					// can be end
-					if(!_pInner)
+					if(!_pInner) {
 						_pInner.set();
+					}
 					innerSpaceRemovables = 0;
 					while (_current < _packet.end()) {
 						if (*_current == ']' && ++_current < _packet.end() && *_current == ']' && ++_current < _packet.end() && *_current == '>')
@@ -220,9 +222,11 @@ RESET:
 				
 				// skip space
 				++_current;
-				if (!_pInner)
-					while (_current < _packet.end() && isspace(*_current))
+				if (!_pInner) {
+					while (_current < _packet.end() && isspace(*_current)) {
 						++_current;
+					}
+				}
 
 			} else {
 
@@ -353,14 +357,16 @@ RESET:
 
 				// skip space
 				++_current;
-				if (!_pInner)
-					while (_current < _packet.end() && isspace(*_current))
+				if (!_pInner) {
+					while (_current < _packet.end() && isspace(*_current)) {
 						++_current;
+					}
+				}
 
 				String::Scoped scoped(name, size, _packet);
-				if (isInfos)
+				if (isInfos) {
 					next = onXMLInfos(scoped, _attributes);
-				else {
+				} else {
 					_tags.emplace_back(tag); // before to allow a call to save
 					next = onStartXMLElement(scoped, _attributes);
 					if (next && tag.full) {

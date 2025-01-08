@@ -15,7 +15,7 @@ int main() {
 	CHECK(test == "hello world");
 
 	test = "hello world";
-	CHECK(String::replace(test, "hello", "goodbye") == "goodbye");
+	CHECK(String::replace(test, "hello", "goodbye") == "goodbye world");
 
 	// TODO !
 

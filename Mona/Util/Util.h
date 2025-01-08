@@ -35,7 +35,7 @@ struct Util : virtual Static {
 		return (it != map.end()) ? it->second : defaultValue;
 	}
 
-	static void Dump(const char* data, uint32_t size, Buffer& buffer);
+	static void Dump(std::string& buffer, const char* data, uint32_t size);
 
 	static const Parameters& Environment();
 

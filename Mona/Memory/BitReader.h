@@ -44,14 +44,14 @@ struct BitReader : Bytes, virtual Object {
 
 	uint64_t	position() const { return (_current-_data)*8 + _bit; }
 	virtual uint64_t	next(uint64_t count = 1);
-	void	reset(uint64_t position = 0);
+	void		reset(uint64_t position = 0);
 	uint64_t	shrink(uint64_t available);
 
 	uint64_t	available() const { return (_end -_current)*8 - _bit; }
 
 	// beware, data() can be null
 	const char*		data() const override { return _data; }
-	uint32_t			size() const override { return _size; }
+	size_t			size() const override { return _size; }
 
 	
 	static BitReader Null;
@@ -60,7 +60,7 @@ protected:
 	const char*		_data;
 	const char*		_end;
 	const char*		_current;
-	uint32_t			_size;
+	size_t			_size;
 	uint8_t			_bit;
 };
 

@@ -17,20 +17,22 @@ details (or else see http://mozilla.org/MPL/2.0/).
 #pragma once
 
 #include "Mona/Mona.h"
-#include "Mona/Memory/Buffer.h"
+#include "Mona/Memory/Bytes.h"
 
 namespace Mona {
 
+/**
+ * @ingroup Memory
+ */
 
 /**
- * @ingroup Memory 
- * @brief Packet is a ingenious buffer tool which can be mainly used in two complement ways:
-- As a signature method requirement to allow an area of data to be distributed/shared without copying data.
-		void method(const Packet& packet)
-	To allow a sharing buffer referenced (without data copy) Packet constructor will make data referenced immutable.
-- As a way to hold a sharing buffer (in buffering it if not already done)
-
-Example:
+ * Packet is a ingenious buffer tool which can be mainly used in two complement ways:
+ * - As a signature method requirement to allow an area of data to be distributed/shared without copying data.
+ * 	void method(const Packet& packet)
+ * To allow a sharing buffer referenced (without data copy) Packet constructor will make data referenced immutable.
+ * - As a way to hold a sharing buffer (in buffering it if not already done)
+ * Ex:
+ ```
 	Packet unbuffered("data",4);
 	Packet buffered(pBuffer);
 	...
@@ -38,7 +40,9 @@ Example:
 	// Here Packet wraps a unbuffered area of data
 	packets.push(std::move(unbuffered));
 	// Here Packet wraps a already buffered area of data, after this call pBuffer is empty (became immutable), and no copying data will occur anymore
-	packets.push(std::move(buffered)); */		 
+	packets.push(std::move(buffered));
+```
+ */
 struct Packet: Bytes, virtual Object {
 	NULLABLE(!data())
 	/**
@@ -121,13 +125,13 @@ struct Packet: Bytes, virtual Object {
 	uint32_t identicalBytes(const Packet& packet) const;
 	/**
 	Return buffer */
-	const Shared<const Bytes>&	buffer() const { return _ppBuffer ? *_ppBuffer : _NullBytes; }
+	const Shared<const std::string>&	buffer() const { return _ppBuffer ? *_ppBuffer : _NullBytes; }
 	/**
 	Return data */
-	const char*					data() const override { return _data; }
+	const char*							data() const override { return _data; }
 	/**
 	Return size */
-	uint32_t					size() const override { return _size; }
+	size_t								size() const override { return _size; }
 
 	/**
 	Move the area of data referenced */
@@ -231,12 +235,7 @@ struct Packet: Bytes, virtual Object {
 	/**
 	Capture the buffer passed in parameter, buffer become immutable and allows safe distribution */
 	Packet& set(std::string& buffer) {
-		struct SBytes : Bytes, std::string {
-			SBytes(std::string& buffer) : std::string(std::move(buffer)) {}
-			const char*	data() const override { return std::string::data(); }
-			uint32_t size() const override { return std::string::size(); }
-		};
-		return set(Shared<SBytes>(SET, buffer));
+		return set(Shared<std::string>(SET, std::move(buffer)));
 	}
 	/**
 	Capture the buffer passed in parameter and move area of data referenced, buffer become immutable and allows safe distribution, area have to be include inside */
@@ -260,7 +259,7 @@ struct Packet: Bytes, virtual Object {
 			_reference = false;
 		_data = pBuffer->data();
 		_size = pBuffer->size();
-		_ppBuffer = new Shared<const Bytes>(move(pBuffer)); // forbid now all changes by caller!
+		_ppBuffer = new Shared<const std::string>(move(pBuffer)); // forbid now all changes by caller!
 		return self;
 	}
 	template<typename ByteType, typename = typename std::enable_if<!std::is_const<ByteType>::value>::type>
@@ -283,13 +282,13 @@ struct Packet: Bytes, virtual Object {
 private:
 	Packet& setArea(const char* data, uint32_t size);
 
-	const Shared<const Bytes>&	bufferize() const;
+	const Shared<const std::string>& bufferize() const;
 
-	mutable const Shared<const Bytes>*	_ppBuffer; // if NULL means no bufferization required (static char*)
-	mutable const char*					_data;
-	mutable bool						_reference;
-	uint32_t								_size;
-	static const Shared<const Bytes>	_NullBytes;
+	mutable const Shared<const std::string>*	_ppBuffer; // if NULL means no bufferization required (static char*)
+	mutable const char*							_data;
+	mutable bool								_reference;
+	uint32_t									_size;
+	static const Shared<const std::string>		_NullBytes;
 };
 
 

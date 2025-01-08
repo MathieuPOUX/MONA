@@ -22,18 +22,18 @@ namespace Mona {
 
 BinaryReader BinaryReader::Null(NULL,0);
 
-BinaryReader::BinaryReader(const char* data, uint32_t size, Bytes::Order byteOrder) :
+BinaryReader::BinaryReader(const char* data, size_t size, Bytes::Order byteOrder) :
 	_end(data+size),_data(data),_size(size),_current(data), _flipBytes(byteOrder != Bytes::ORDER_NATIVE) {
 }
 
-uint32_t BinaryReader::next(uint32_t count) {
+size_t BinaryReader::next(size_t count) {
 	if (count > available())
 		count = available();
 	_current += count; 
 	return count;
 }
 
-uint32_t BinaryReader::shrink(uint32_t available) {
+size_t BinaryReader::shrink(size_t available) {
 	uint32_t rest(this->available());
 	if (available > rest)
 		return rest;
@@ -42,7 +42,7 @@ uint32_t BinaryReader::shrink(uint32_t available) {
 	return available;
 }
 
-char* BinaryReader::read(uint32_t size, char* value) {
+char* BinaryReader::read(size_t size, char* value) {
 	uint32_t available(this->available());
 	if (size > available) {
 		_current += available;

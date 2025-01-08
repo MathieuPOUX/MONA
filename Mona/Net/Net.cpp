@@ -167,7 +167,8 @@ uint32_t Net::GetInterfaceIndex(const SocketAddress& address) {
 
 	struct ifreq * ifr = NULL;
 	if (::ioctl(fd, SIOCGIFCONF, &ifc) >= 0) {
-		Buffer buffer(ifc.ifc_len);
+		string buffer;
+		buffer.resize(ifc.ifc_len);
 		ifc.ifc_buf = (caddr_t)buffer.data();
 		if (::ioctl(fd, SIOCGIFCONF, &ifc) >= 0) {
 

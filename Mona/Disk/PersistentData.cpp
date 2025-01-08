@@ -152,8 +152,9 @@ bool PersistentData::loadDirectory(Exception& ex, const string& directory, const
 		File reader(file, File::MODE_READ);
 		if (!reader.load(ex))
 			return true;
-		Shared<Buffer> pBuffer(SET, range<uint32_t>(reader.size()));
-		if (pBuffer->size() > 0 && reader.read(ex, pBuffer->data(), pBuffer->size()) < 0)
+		Shared<string> pBuffer(SET);
+		pBuffer->resize(reader.size());
+		if (reader.read(ex, pBuffer->data(), pBuffer->size()) < 0)
 			return true;
 
 		// compute md5
